@@ -19,6 +19,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 	  	   larcorealg_Geometry
 		   ubcore_Geometry
 		   ubobj_MuCS
+		   ubobj_Trigger
 		   larcore_Geometry_Geometry_service
 	   	   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
 		   larsim_MCCheater_ParticleInventoryService_service
