@@ -1,0 +1,6 @@
+add_subdirectory(CosmicTagging)
+add_subdirectory(LEEPhotonAnalysis)
+add_subdirectory(LLApp)
+add_subdirectory(LLBasicTool)
+add_subdirectory(LLSelectionTool)
+add_subdirectory(LiteMaker)
