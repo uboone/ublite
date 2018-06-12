@@ -8,6 +8,7 @@ art_make( BASENAME_ONLY
 	  LIB_LIBRARIES
                 	  larsim_PhotonPropagation
 			  larsim_PhotonPropagation_PhotonVisibilityService_service
+			  larcorealg_Geometry
 			  ublite_BasicTool_GeoAlgo
 			  ublite_SelectionTool_OpT0FinderBase
 			  ubobj_Trigger
