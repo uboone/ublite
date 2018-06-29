@@ -27,11 +27,11 @@
 #include "DataFormat/potsummary.h"
 
 // LArSoft includes
-#include "uboone/Geometry/UBOpChannelTypes.h"
-#include "uboone/Geometry/UBOpReadoutMap.h"
-#include "ubooneobj/Trigger/ubdaqSoftwareTriggerData.h"
-#include "ubooneobj/MuCS/MuCSData.h"
-#include "ubooneobj/MuCS/MuCSRecoData.h"
+#include "ubcore/Geometry/UBOpChannelTypes.h"
+#include "ubcore/Geometry/UBOpReadoutMap.h"
+#include "ubobj/Trigger/ubdaqSoftwareTriggerData.h"
+#include "ubobj/MuCS/MuCSData.h"
+#include "ubobj/MuCS/MuCSRecoData.h"
 #include "larsim/EventWeight/Base/MCEventWeight.h"
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"

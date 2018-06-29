@@ -28,7 +28,7 @@
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
 #include "lardata/Utilities/GeometryUtilities.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
-#include "uboone/Geometry/UBOpReadoutMap.h"
+#include "ubcore/Geometry/UBOpReadoutMap.h"
 
 // LArLite
 #include "Base/Base-TypeDef.h"

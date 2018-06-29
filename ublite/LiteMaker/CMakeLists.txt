@@ -15,11 +15,11 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 	  BASENAME_ONLY
 	  LIBRARY_NAME     uboonecode_uboone_LiteMaker
 	  LIB_LIBRARIES
-		   uboone_RawData
+		   ubraw_RawData
 	  	   larcorealg_Geometry
-		   uboone_Geometry
-		   ubooneobj_MuCS
-		   ubooneobj_Trigger
+		   ubcore_Geometry
+		   ubobj_MuCS
+		   ubobj_Trigger
 		   larcore_Geometry_Geometry_service
 	   	   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
 		   larsim_MCCheater_ParticleInventoryService_service
@@ -53,14 +53,14 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 
           MODULE_LIBRARIES 	  		   
 		   uboonecode_uboone_LiteMaker
-		   uboone_RawData
+		   ubraw_RawData
 	      	   TFileMetadataMicroBooNE_service
 	      	   FileCatalogMetadataMicroBooNE_service
 		   LLMetaMaker_service
-		   ubooneobj_MuCS
-		   ubooneobj_Trigger
+		   ubobj_MuCS
+		   ubobj_Trigger
 		   larcorealg_Geometry
-		   uboone_Geometry
+		   ubcore_Geometry
 		   larcore_Geometry_Geometry_service
 		   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
 		   nusimdata_SimulationBase

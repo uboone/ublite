@@ -2,7 +2,7 @@
 
 # Loop over all installed fcl files.
 
-find $MRB_BUILDDIR/uboonecode/job -name \*.fcl -print | while read fcl
+find $MRB_BUILDDIR/ublite/job -name \*.fcl -print | while read fcl
 do
   echo "Testing fcl file $fcl"
 

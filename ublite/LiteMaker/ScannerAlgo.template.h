@@ -1,8 +1,8 @@
 #ifndef SCANNERALGO_TEMPLATE_H
 #define SCANNERALGO_TEMPLATE_H
 
-#include "uboone/Geometry/UBOpChannelTypes.h"
-#include "uboone/Geometry/UBOpReadoutMap.h"
+#include "ubcore/Geometry/UBOpChannelTypes.h"
+#include "ubcore/Geometry/UBOpReadoutMap.h"
 
 #include "DataFormat/event_ass.h"
 #include "DataFormat/sparse_vector.h"
