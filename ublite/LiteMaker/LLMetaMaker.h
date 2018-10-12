@@ -14,6 +14,7 @@
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
+#include "art/Persistency/Provenance/ScheduleContext.h"
 #include "canvas/Persistency/Common/Ptr.h"
 #include "canvas/Persistency/Common/PtrVector.h"
 
@@ -25,8 +26,6 @@ namespace util{
 
   public:
     LLMetaMaker(fhicl::ParameterSet const& pset, art::ActivityRegistry& reg);
-
-    ~LLMetaMaker(){};
 
   public:
 
