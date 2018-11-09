@@ -1029,12 +1029,12 @@ namespace larlite {
       track_lite.set_track_id ( track_ptr->ID()   );
       // Direction & points
       for(size_t i=0; i<track_ptr->NumberTrajectoryPoints(); i++) {
-	track_lite.add_vertex     (track_ptr->LocationAtPoint(i));
-	track_lite.add_direction  (track_ptr->DirectionAtPoint(i));
+	track_lite.add_vertex     (track_ptr->LocationAtPoint<TVector3>(i));
+	track_lite.add_direction  (track_ptr->DirectionAtPoint<TVector3>(i));
       }
       // Covariance
       for(size_t i=0; i<track_ptr->NumberCovariance(); i++)
-	track_lite.add_covariance (track_ptr->CovarianceAtPoint(i));
+	track_lite.add_covariance (track_ptr->CovarianceAtPoint<TMatrixD>(i));
       // Momentum
       if (track_ptr->HasMomentum()) {
 	for(size_t i=0; i<track_ptr->NumberTrajectoryPoints(); i++)
