@@ -1123,14 +1123,14 @@ namespace larlite {
       
       larlite::calorimetry lite_calo;
       
-      lite_calo.set_dedx(calo_ptr->dEdx());
-      lite_calo.set_dqdx(calo_ptr->dQdx());
-      lite_calo.set_xyz(calo_ptr->XYZ());
-      lite_calo.set_residual_range(calo_ptr->ResidualRange());
-      lite_calo.set_deadwire_range(calo_ptr->DeadWireResRC());
+      lite_calo.set_dedx(recob::tracking::convertVec<double,float>(calo_ptr->dEdx()));
+      lite_calo.set_dqdx(recob::tracking::convertVec<double,float>(calo_ptr->dQdx()));
+      lite_calo.set_xyz(recob::tracking::convertVecPointToTVec3(calo_ptr->XYZ()));
+      lite_calo.set_residual_range(recob::tracking::convertVec<double,float>(calo_ptr->ResidualRange()));
+      lite_calo.set_deadwire_range(recob::tracking::convertVec<double,float>(calo_ptr->DeadWireResRC()));
       lite_calo.set_kinetic_energy(calo_ptr->KineticEnergy());
       lite_calo.set_range(calo_ptr->Range());
-      lite_calo.set_track_pitch(calo_ptr->TrkPitchVec());
+      lite_calo.set_track_pitch(recob::tracking::convertVec<double,float>(calo_ptr->TrkPitchVec()));
       lite_calo.set_plane_id( larlite::geo::PlaneID( calo_ptr->PlaneID().Cryostat,
 						     calo_ptr->PlaneID().TPC,
 						     calo_ptr->PlaneID().Plane ) );
