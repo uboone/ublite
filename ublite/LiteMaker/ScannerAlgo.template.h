@@ -1029,12 +1029,14 @@ namespace larlite {
       track_lite.set_track_id ( track_ptr->ID()   );
       // Direction & points
       for(size_t i=0; i<track_ptr->NumberTrajectoryPoints(); i++) {
-	track_lite.add_vertex     (track_ptr->LocationAtPoint(i));
-	track_lite.add_direction  (track_ptr->DirectionAtPoint(i));
+	track_lite.add_vertex     (track_ptr->LocationAtPoint<TVector3>(i));
+	track_lite.add_direction  (track_ptr->DirectionAtPoint<TVector3>(i));
       }
       // Covariance
-      for(size_t i=0; i<track_ptr->NumberCovariance(); i++)
-	track_lite.add_covariance (track_ptr->CovarianceAtPoint(i));
+      if (track_ptr->VertexCovariance()!=recob::tracking::SMatrixSym55())
+	track_lite.add_covariance (track_ptr->VertexCovariance<TMatrixD>());
+      if (track_ptr->EndCovariance()!=recob::tracking::SMatrixSym55())
+	track_lite.add_covariance (track_ptr->EndCovariance<TMatrixD>());
       // Momentum
       if (track_ptr->HasMomentum()) {
 	for(size_t i=0; i<track_ptr->NumberTrajectoryPoints(); i++)
@@ -1123,14 +1125,14 @@ namespace larlite {
       
       larlite::calorimetry lite_calo;
       
-      lite_calo.set_dedx(calo_ptr->dEdx());
-      lite_calo.set_dqdx(calo_ptr->dQdx());
-      lite_calo.set_xyz(calo_ptr->XYZ());
-      lite_calo.set_residual_range(calo_ptr->ResidualRange());
-      lite_calo.set_deadwire_range(calo_ptr->DeadWireResRC());
+      lite_calo.set_dedx(recob::tracking::convertVec<double,float>(calo_ptr->dEdx()));
+      lite_calo.set_dqdx(recob::tracking::convertVec<double,float>(calo_ptr->dQdx()));
+      lite_calo.set_xyz(recob::tracking::convertVecPointToTVec3(calo_ptr->XYZ()));
+      lite_calo.set_residual_range(recob::tracking::convertVec<double,float>(calo_ptr->ResidualRange()));
+      lite_calo.set_deadwire_range(recob::tracking::convertVec<double,float>(calo_ptr->DeadWireResRC()));
       lite_calo.set_kinetic_energy(calo_ptr->KineticEnergy());
       lite_calo.set_range(calo_ptr->Range());
-      lite_calo.set_track_pitch(calo_ptr->TrkPitchVec());
+      lite_calo.set_track_pitch(recob::tracking::convertVec<double,float>(calo_ptr->TrkPitchVec()));
       lite_calo.set_plane_id( larlite::geo::PlaneID( calo_ptr->PlaneID().Cryostat,
 						     calo_ptr->PlaneID().TPC,
 						     calo_ptr->PlaneID().Plane ) );
