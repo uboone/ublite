@@ -100,6 +100,7 @@ simple_plugin(LLMetaMaker "service"
 	      TFileMetadataMicroBooNE_service
 	      FileCatalogMetadataMicroBooNE_service
 	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}	      
+              art_Framework_Principal
 	      art_Utilities canvas
 	      ${MF_MESSAGELOGGER}
 	      
