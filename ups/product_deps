@@ -2,7 +2,7 @@
 
 # The *parent* line must the first non-commented line and defines this product and version
 # The version must be of the form vxx_yy_zz (e.g. v01_02_03)
-parent ublite v08_00_00_02
+parent ublite v08_00_00_03
 
 defaultqual e17
 
@@ -30,10 +30,10 @@ table_fragment_end
 # Add the dependent product and version
 
 product                 version
-ubana                   v08_00_00_02
+ubana                   v08_00_00_03
 larpandora              v08_03_00_01
 larlite                 v06_70_00c
-cetbuildtools	        v7_06_03	-	only_for_build
+cetbuildtools	        v7_06_04	-	only_for_build
 end_product_list
 
 qualifier      ubana          larpandora     larlite        
