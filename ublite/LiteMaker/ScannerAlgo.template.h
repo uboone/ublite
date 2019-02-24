@@ -1150,15 +1150,15 @@ namespace larlite {
   { 
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
     //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
-    auto lite_data = (::larlite::event_partid*)lite_dh;
+    //auto lite_data = (::larlite::event_partid*)lite_dh;
     
     for(size_t i=0; i<dh->size(); ++i) {
       
-      art::Ptr<::anab::ParticleID> partid_ptr(dh,i);
+      //art::Ptr<::anab::ParticleID> partid_ptr(dh,i);
 
-      auto const& pid = partid_ptr->PlaneID();
+      //auto const& pid = partid_ptr->PlaneID();
       
-      larlite::partid lite_partid( partid_ptr->Pdg(),
+      /*larlite::partid lite_partid( partid_ptr->Pdg(),
 				   partid_ptr->Ndf(),
 				   partid_ptr->MinChi2(),
 				   partid_ptr->DeltaChi2(),
@@ -1170,10 +1170,10 @@ namespace larlite {
 				   partid_ptr->MissingEavg(),
 				   partid_ptr->PIDA(),
 				   ::larlite::geo::PlaneID(pid.Cryostat,pid.TPC,pid.Plane));
-      
+      */
       //fPtrIndex_partid[partid_ptr] = std::make_pair(lite_data->size(),name_index);
       
-      lite_data->push_back(lite_partid);
+      //lite_data->push_back(lite_partid);
     }
   }
 
