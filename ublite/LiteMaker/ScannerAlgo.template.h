@@ -1151,25 +1151,112 @@ namespace larlite {
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
     //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
     auto lite_data = (::larlite::event_partid*)lite_dh;
-    
+
+    // Set dummy values
+    double pidpdg[3] = {-1,-1,-1};
+    double pidchi[3] = {99999.,99999.,99999.};
+    double pidndf[3] = {-1,-1,-1};
+    double piddchi2[3] = {0,0,0};
+    double pidchi2k[3] = {0,0,0};
+    double pidchi2pi[3] = {0,0,0};
+    double pidchi2p[3] = {0,0,0};
+    double pidchi2mu[3] = {0,0,0};
+    double pidpida[3] = {0,0,0};
+    double pidmissinge[3] = {0,0,0}; // Deprecated in new PID code (not filled)
+    double pidmissingeavg[3] = {0,0,0}; // Deprecated in new PID code (not filled)
+    double nextminpidchi[3] = {99999.,99999.,99999.};
+
     for(size_t i=0; i<dh->size(); ++i) {
       
       art::Ptr<::anab::ParticleID> partid_ptr(dh,i);
 
-      auto const& pid = partid_ptr->PlaneID();
+      //auto const& pid = partid_ptr->PlaneID();
       
-      larlite::partid lite_partid( partid_ptr->Pdg(),
-				   partid_ptr->Ndf(),
-				   partid_ptr->MinChi2(),
-				   partid_ptr->DeltaChi2(),
-				   partid_ptr->Chi2Proton(),
-				   partid_ptr->Chi2Kaon(),
-				   partid_ptr->Chi2Pion(),
-				   partid_ptr->Chi2Muon(),
-				   partid_ptr->MissingE(),
-				   partid_ptr->MissingEavg(),
-				   partid_ptr->PIDA(),
-				   ::larlite::geo::PlaneID(pid.Cryostat,pid.TPC,pid.Plane));
+      std::vector<anab::sParticleIDAlgScores> AlgScoresVec = partid_ptr->ParticleIDAlgScores();
+
+        // Loop though AlgScoresVec and find the variables we want
+      for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
+	anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
+
+	/* std::cout << "\n ParticleIDAlg " << AlgScore.fAlgName
+	   << "\n -- Variable type: " << AlgScore.fVariableType
+	   << "\n -- Track direction: " << AlgScore.fTrackDir
+	   << "\n -- Assuming PDG: " << AlgScore.fAssumedPdg
+	   << "\n -- Number of degrees of freedom: " << AlgScore.fNdf
+	   << "\n -- Value: " << AlgScore.fValue
+	   << "\n -- Using planeID: " << UBPID::uB_getSinglePlane(AlgScore.fPlaneID) << std::endl;*/
+          
+	int planenum = UBPID::uB_getSinglePlane(AlgScore.fPlaneID);
+	if (planenum<0 || planenum>2) continue;
+
+	if (AlgScore.fAlgName == "Chi2"){
+	  if (TMath::Abs(AlgScore.fAssumedPdg) == 13){ // chi2mu
+	    pidchi2mu[planenum] = AlgScore.fValue;
+	    if (AlgScore.fValue<pidchi[planenum]){
+	      pidchi[planenum] = AlgScore.fValue;
+	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
+	      pidndf[planenum] = AlgScore.fNdf;
+	    }
+	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	      nextminpidchi[planenum] = AlgScore.fValue;
+	    }
+	  }
+	  else if (TMath::Abs(AlgScore.fAssumedPdg) == 2212){ // chi2pr
+	    pidchi2p[planenum] = AlgScore.fValue;
+	    if (AlgScore.fValue<pidchi[planenum]){
+	      pidchi[planenum] = AlgScore.fValue;
+	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
+	      pidndf[planenum] = AlgScore.fNdf;
+	    }
+	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	      nextminpidchi[planenum] = AlgScore.fValue;
+	    }
+	  }
+	  else if (TMath::Abs(AlgScore.fAssumedPdg) == 211){ // chi2pi
+	    pidchi2pi[planenum] = AlgScore.fValue;
+	    if (AlgScore.fValue<pidchi[planenum]){
+	      pidchi[planenum] = AlgScore.fValue;
+	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
+	      pidndf[planenum] = AlgScore.fNdf;
+	    }
+	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	      nextminpidchi[planenum] = AlgScore.fValue;
+	    }
+	  }
+	  else if (TMath::Abs(AlgScore.fAssumedPdg) == 321){ // chi2ka
+	    pidchi2ka[planenum] = AlgScore.fValue;
+	    if (AlgScore.fValue<pidchi[planenum]){
+	      pidchi[planenum] = AlgScore.fValue;
+	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
+	      pidndf[planenum] = AlgScore.fNdf;
+	    }
+	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	      nextminpidchi[planenum] = AlgScore.fValue;
+	    }
+	  }  
+	}
+	else if (AlgScore.fVariableType==anab::kPIDA){
+	  TrackerData.trkpidpida[iTrk][planenum] = AlgScore.fValue;
+	}
+          
+      } // end loop though AlgScoresVec
+    } // end loop over i (partid_ptrs in ptr vec)
+
+    // Finally, set variables
+    for (size_t planenum=0; planenum<3; planenum++){
+      
+      larlite::partid lite_partid( pidpdg[planenum],
+				   pidndf[planenum],
+				   pidchi[planenum],
+				   nextminpidchi[planenum]-pidchi[planenum],
+				   pidchi2p[planenum],
+				   pidchi2ka[planenum],
+				   pidchi2pi[planenum],
+				   pidchi2mu[planenum],
+				   pidmissinge[planenum],
+				   pidmissingeavg[planenum],
+				   pidpida[planenum],
+				   ::larlite::geo::PlaneID(0,0,planenum));
       
       //fPtrIndex_partid[partid_ptr] = std::make_pair(lite_data->size(),name_index);
       
