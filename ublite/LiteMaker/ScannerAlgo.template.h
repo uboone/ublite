@@ -1145,7 +1145,7 @@ namespace larlite {
   }
 
   template <>
-  void ScannerAlgo::ScanData(art::Handle<std::vector< ::anab::ParticleID> > const &dh,
+    void ScannerAlgo::ScanData(art::Handle<std::vector< ::anab::ParticleID> > const &dh,
 			     ::larlite::event_base* lite_dh)
   { 
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
@@ -1156,7 +1156,6 @@ namespace larlite {
     double pidpdg[3] = {-1,-1,-1};
     double pidchi[3] = {99999.,99999.,99999.};
     double pidndf[3] = {-1,-1,-1};
-    double piddchi2[3] = {0,0,0};
     double pidchi2k[3] = {0,0,0};
     double pidchi2pi[3] = {0,0,0};
     double pidchi2p[3] = {0,0,0};
@@ -1172,11 +1171,11 @@ namespace larlite {
 
       //auto const& pid = partid_ptr->PlaneID();
       
-      std::vector<anab::sParticleIDAlgScores> AlgScoresVec = partid_ptr->ParticleIDAlgScores();
+      std::vector<::anab::sParticleIDAlgScores> AlgScoresVec = partid_ptr->ParticleIDAlgScores();
 
         // Loop though AlgScoresVec and find the variables we want
       for (size_t i_algscore=0; i_algscore<AlgScoresVec.size(); i_algscore++){
-	anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
+	::anab::sParticleIDAlgScores AlgScore = AlgScoresVec.at(i_algscore);
 
 	/* std::cout << "\n ParticleIDAlg " << AlgScore.fAlgName
 	   << "\n -- Variable type: " << AlgScore.fVariableType
@@ -1184,9 +1183,13 @@ namespace larlite {
 	   << "\n -- Assuming PDG: " << AlgScore.fAssumedPdg
 	   << "\n -- Number of degrees of freedom: " << AlgScore.fNdf
 	   << "\n -- Value: " << AlgScore.fValue
-	   << "\n -- Using planeID: " << UBPID::uB_getSinglePlane(AlgScore.fPlaneID) << std::endl;*/
+	   << "\n -- Using plane mask: " << AlgScore.fPlaneMask << std::endl;*/
           
-	int planenum = UBPID::uB_getSinglePlane(AlgScore.fPlaneID);
+	if (AlgScore.fPlaneMask.count()>1 || AlgScore.fPlaneMask.none()) continue;
+	int planenum = -1;
+	if (AlgScore.fPlaneMask.test(0)) planenum = 0;
+	else if (AlgScore.fPlaneMask.test(1)) planenum = 1;
+	else if (AlgScore.fPlaneMask.test(2)) planenum = 2;
 	if (planenum<0 || planenum>2) continue;
 
 	if (AlgScore.fAlgName == "Chi2"){
@@ -1197,7 +1200,7 @@ namespace larlite {
 	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
 	      pidndf[planenum] = AlgScore.fNdf;
 	    }
-	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	    else if (AlgScore.fValue<nextminpidchi[planenum]){
 	      nextminpidchi[planenum] = AlgScore.fValue;
 	    }
 	  }
@@ -1208,7 +1211,7 @@ namespace larlite {
 	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
 	      pidndf[planenum] = AlgScore.fNdf;
 	    }
-	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	    else if (AlgScore.fValue<nextminpidchi[planenum]){
 	      nextminpidchi[planenum] = AlgScore.fValue;
 	    }
 	  }
@@ -1219,24 +1222,24 @@ namespace larlite {
 	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
 	      pidndf[planenum] = AlgScore.fNdf;
 	    }
-	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	    else if (AlgScore.fValue<nextminpidchi[planenum]){
 	      nextminpidchi[planenum] = AlgScore.fValue;
 	    }
 	  }
 	  else if (TMath::Abs(AlgScore.fAssumedPdg) == 321){ // chi2ka
-	    pidchi2ka[planenum] = AlgScore.fValue;
+	    pidchi2k[planenum] = AlgScore.fValue;
 	    if (AlgScore.fValue<pidchi[planenum]){
 	      pidchi[planenum] = AlgScore.fValue;
 	      pidpdg[planenum] = TMath::Abs(AlgScore.fAssumedPdg);
 	      pidndf[planenum] = AlgScore.fNdf;
 	    }
-	    else if (AlgoScore.fValue<nextminpidchi[planenum]){
+	    else if (AlgScore.fValue<nextminpidchi[planenum]){
 	      nextminpidchi[planenum] = AlgScore.fValue;
 	    }
 	  }  
 	}
-	else if (AlgScore.fVariableType==anab::kPIDA){
-	  TrackerData.trkpidpida[iTrk][planenum] = AlgScore.fValue;
+	else if (AlgScore.fVariableType==::anab::kPIDA){
+	  pidpida[planenum] = AlgScore.fValue;
 	}
           
       } // end loop though AlgScoresVec
@@ -1250,7 +1253,7 @@ namespace larlite {
 				   pidchi[planenum],
 				   nextminpidchi[planenum]-pidchi[planenum],
 				   pidchi2p[planenum],
-				   pidchi2ka[planenum],
+				   pidchi2k[planenum],
 				   pidchi2pi[planenum],
 				   pidchi2mu[planenum],
 				   pidmissinge[planenum],
