@@ -99,6 +99,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 simple_plugin(LLMetaMaker "service"
 	      TFileMetadataMicroBooNE_service
 	      FileCatalogMetadataMicroBooNE_service
+	      ubraw_RawData
 	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}	      
               art_Framework_Principal
 	      art_Utilities canvas
