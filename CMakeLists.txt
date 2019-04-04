@@ -54,6 +54,7 @@ find_ups_product( larana v1_00_00 )
 find_ups_product( larpandora v1_00_00 )
 find_ups_product( larlite v1_00_00 )
 find_ups_product( art v1_00_00 )
+find_ups_product(art_root_io)
 find_ups_product( larcore )
 find_ups_product( nutools )
 
