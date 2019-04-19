@@ -57,6 +57,10 @@ find_ups_product( larlite v1_00_00 )
 find_ups_product( art v1_00_00 )
 find_ups_product( larcore )
 find_ups_product( nutools )
+find_ups_product( ubobj )
+find_ups_product( ubcore )
+find_ups_product( ubraw )
+
 
 # macros for dictionary and simple_plugin
 include(ArtDictionary)
