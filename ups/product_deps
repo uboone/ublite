@@ -32,11 +32,11 @@ table_fragment_end
 product                 version
 ubana                   v08_00_00_15
 larpandora              v08_03_00_07
-larlite                 v06_70_00c
+ubdl                    v1_0_0
 cetbuildtools	        v7_11_00	-	only_for_build
 end_product_list
 
-qualifier      ubana          larpandora     larlite        
+qualifier      ubana          larpandora     ubdl
 c2:debug       c2:debug       c2:debug       c2:debug       
 c2:opt         c2:opt         c2:opt         c2:opt         
 c2:prof        c2:prof        c2:prof        c2:prof        
