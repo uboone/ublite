@@ -21,7 +21,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   ubobj_MuCS
 		   ubobj_Trigger
 		   larcore_Geometry_Geometry_service
-	   	   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
+	   	   larsim_Simulation nug4_ParticleNavigation lardataobj_Simulation
 		   larsim_MCCheater_ParticleInventoryService_service
 		   lardataobj_RecoBase
 		   nusimdata_SimulationBase
@@ -62,7 +62,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   larcorealg_Geometry
 		   ubcore_Geometry
 		   larcore_Geometry_Geometry_service
-		   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
+		   larsim_Simulation nug4_ParticleNavigation lardataobj_Simulation
 		   nusimdata_SimulationBase
 		   lardata_Utilities
 		   lardataobj_MCBase
