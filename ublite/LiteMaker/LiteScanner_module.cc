@@ -248,10 +248,9 @@ void LiteScanner::beginSubRun(const art::SubRun& sr)
     auto lite_data = (::larlite::potsummary*)(_mgr.get_subrundata(::larlite::data::kPOTSummary,label));
     
     art::Handle< sumdata::POTSummary > potHandle;
-    if(label.find("::")<label.size()) {
-      sr.getByLabel(label.substr(0,label.find("::")),
-		    label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		    potHandle);
+    if(label.find(":")<label.size()) {
+      art::InputTag inputtag(label);
+      sr.getByLabel(inputtag, potHandle);
     }else{ sr.getByLabel(label, potHandle); }
 
     if(potHandle.isValid()) {
@@ -543,10 +542,10 @@ void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
 
     std::string label = _chstatus_rawdigit_producer;
 
-    if(label.find("::")<label.size()) {
-      e.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   digit_h);
+    if(label.find(":")<label.size()) {
+      art::InputTag inputtag(label);
+      e.getByLabel(inputtag, digit_h);
+
     }else{ e.getByLabel(_chstatus_rawdigit_producer,digit_h);}
       
     for(auto const& digit : *digit_h) {
@@ -631,23 +630,9 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
     }
   }
   else{    
-    if(label.find("_")<label.size()) {
-      size_t pos = label.find("_",0);
-      vector<size_t> positions;
-      while( pos != std::string::npos){
-	positions.push_back(pos);
-	pos = label.find("_",pos+1);
-      }
-      if(positions.size()==1){
-	evt.getByLabel(label.substr(0,positions[0]),
-		       label.substr(positions[0]+1,label.size()-positions[0]-1),
-		       dh);
-      }else{
-	evt.getByLabel(label.substr(0,positions[0]),
-		       label.substr(positions[0]+1,positions[1]-positions[0]-1),
-		       label.substr(positions[1]+1,label.size()-positions[1]-1),
-		       dh);
-      }
+    if(label.find(":")<label.size()) {
+      art::InputTag inputtag(label);
+      evt.getByLabel(inputtag, dh);
 
     }else{ evt.getByLabel(label,dh); }
     if(!dh.isValid()) return;
@@ -664,28 +649,9 @@ template<class T> void LiteScanner::ScanSimpleData(const art::Event& evt, const 
   auto lite_data = _mgr.get_data((::larlite::data::DataType_t)lite_id.first,lite_id.second);
   std::string label=lite_id.second;
   art::Handle<T> dh;
-  if(label.find("_")<label.size()) {
-    /*
-    evt.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   dh);
-    */
-    size_t pos = label.find("_",0);
-    vector<size_t> positions;
-    while( pos != std::string::npos){
-      positions.push_back(pos);
-      pos = label.find("_",pos+1);
-    }
-    if(positions.size()==1){
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,label.size()-positions[0]-1),
-		     dh);
-    }else{
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,positions[1]-positions[0]-1),
-		     label.substr(positions[1]+1,label.size()-positions[1]-1),
-		     dh);
-    }
+  if(label.find(":")<label.size()) {
+    art::InputTag inputtag(label);
+    evt.getByLabel(inputtag,dh);
     
   }else{ evt.getByLabel(lite_id.second,dh); }
     
@@ -703,26 +669,9 @@ void LiteScanner::ScanSimPhotons(const art::Event& evt, const size_t name_index)
   std::string label = lite_id.second;
   art::Handle< std::vector<sim::SimPhotons> > dh;
 
-  if(label.find("_")<label.size()) {
-    //evt.getByLabel(label.substr(0,label.find("::")),
-    //		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-    //		   dh);
-    size_t pos = label.find("_",0);
-    vector<size_t> positions;
-    while( pos != std::string::npos){
-      positions.push_back(pos);
-      pos = label.find("_",pos+1);
-    }
-    if(positions.size()==1){
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,label.size()-positions[0]-1),
-		     dh);
-    }else{
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,positions[1]-positions[0]-1),
-		     label.substr(positions[1]+1,label.size()-positions[1]-1),
-		     dh);
-    }
+  if(label.find(":")<label.size()) {
+    art::InputTag inputtag(label);
+    evt.getByLabel(inputtag,dh);
 
   }else{ evt.getByLabel(lite_id.second,dh); }
     
@@ -771,27 +720,9 @@ template<class T> void LiteScanner::SaveAssociationSource(const art::Event& evt)
     //std::cout <<"ASS LABEL NAME !! "<< name << ", "<<lite_type<<std::endl;
 
     art::Handle<std::vector<T> > dh;
-    if(name.find("_")<name.size()) {
-      //std::cout<<"Inside label setter :"<<name.substr(0,name.find("::"))<<std::endl ;
-      //evt.getByLabel(name.substr(0,name.find("::")),
-      //	     name.substr(name.find("::")+2,name.size()-name.find("::")-2),
-      //	     dh);
-      size_t pos = name.find("_",0);
-      vector<size_t> positions;
-      while( pos != std::string::npos){
-	positions.push_back(pos);
-	pos = name.find("_",pos+1);
-      }
-      if(positions.size()==1){
-	evt.getByLabel(name.substr(0,positions[0]),
-		       name.substr(positions[0]+1,name.size()-positions[0]-1),
-		       dh);
-      }else{
-	evt.getByLabel(name.substr(0,positions[0]),
-		       name.substr(positions[0]+1,positions[1]-positions[0]-1),
-		       name.substr(positions[1]+1,name.size()-positions[1]-1),
-		       dh);
-      }
+    if(name.find(":")<name.size()) {
+      art::InputTag inputtag(name);
+      evt.getByLabel(inputtag,dh);
 
     }else{ evt.getByLabel(name,dh); }
     
@@ -828,27 +759,10 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
   //std::cout << "\nI am scanning for this assocaition : " << label << std::endl; 
   // Done adding this block in
   
-  if(label.find("_")<label.size()) {
-    //evt.getByLabel(label.substr(0,label.find("::")),
-    //		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-    //
-    size_t pos = label.find("_",0);
-    vector<size_t> positions;
-    while( pos != std::string::npos){
-      positions.push_back(pos);
-      pos = label.find("_",pos+1);
-    }
-    if(positions.size()==1){
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,label.size()-positions[0]-1),
-		     dh);
-    }else{
-      evt.getByLabel(label.substr(0,positions[0]),
-		     label.substr(positions[0]+1,positions[1]-positions[0]-1),
-		     label.substr(positions[1]+1,label.size()-positions[1]-1),
-		     dh);
-    }
-		   dh);
+  if(label.find(":")<label.size()) {
+    art::InputTag inputtag(label);
+    evt.getByLabel(inputtag,dh);
+
   }else{ evt.getByLabel(lite_id.second,dh); }
 
       
