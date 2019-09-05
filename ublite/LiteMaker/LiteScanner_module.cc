@@ -623,8 +623,6 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
   else{    
     art::InputTag inputtag(label);
     evt.getByLabel(inputtag, dh);
-    std::cout << "ScanData" << std::endl;
-    std::cout << inputtag.label() <<" "<<inputtag.instance() <<" "<<inputtag.process() << std::endl;
     
     if(!dh.isValid()) return;
     fAlg.ScanData(dh,lite_data);
@@ -644,8 +642,6 @@ template<class T> void LiteScanner::ScanSimpleData(const art::Event& evt, const 
   art::Handle<T> dh;
   art::InputTag inputtag(label);
   evt.getByLabel(inputtag,dh);
-  std::cout << "ScanSimpleData"<< std::endl;
-  std::cout << inputtag.label() <<" "<<inputtag.instance() <<" "<<inputtag.process() << std::endl;
     
   if(!dh.isValid()) return;
   fAlg.ScanSimpleData(dh,lite_data);
