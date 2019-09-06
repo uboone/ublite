@@ -248,11 +248,8 @@ void LiteScanner::beginSubRun(const art::SubRun& sr)
     auto lite_data = (::larlite::potsummary*)(_mgr.get_subrundata(::larlite::data::kPOTSummary,label));
     
     art::Handle< sumdata::POTSummary > potHandle;
-    if(label.find("::")<label.size()) {
-      sr.getByLabel(label.substr(0,label.find("::")),
-		    label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		    potHandle);
-    }else{ sr.getByLabel(label, potHandle); }
+    art::InputTag inputtag(label);
+    sr.getByLabel(inputtag, potHandle);
 
     if(potHandle.isValid()) {
       lite_data->totpot     = potHandle->totpot;
@@ -542,12 +539,8 @@ void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
     art::Handle<std::vector<raw::RawDigit> > digit_h;
 
     std::string label = _chstatus_rawdigit_producer;
-
-    if(label.find("::")<label.size()) {
-      e.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   digit_h);
-    }else{ e.getByLabel(_chstatus_rawdigit_producer,digit_h);}
+    art::InputTag inputtag(label);
+    e.getByLabel(inputtag, digit_h);
       
     for(auto const& digit : *digit_h) {
       auto const ch = digit.Channel();
@@ -612,11 +605,8 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
   if(lite_id.first == ::larlite::data::kOpDetWaveform) {
     art::ServiceHandle<geo::UBOpReadoutMap> ub_pmt_channel_map;
 
-    if(label.find("::")<label.size()) {
-      evt.getByLabel(label.substr(0,label.find("::")),
-		     label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		     dh);
-    }else{ evt.getByLabel(label, dh); }
+    art::InputTag inputtag(label);
+    evt.getByLabel(inputtag, dh);
 
     if(dh.isValid()) fAlg.ScanData(dh,lite_data);
 
@@ -630,12 +620,10 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
 
     }
   }
-  else{
-    if(label.find("::")<label.size()) {
-      evt.getByLabel(label.substr(0,label.find("::")),
-		     label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		     dh);
-    }else{ evt.getByLabel(label,dh); }
+  else{    
+    art::InputTag inputtag(label);
+    evt.getByLabel(inputtag, dh);
+    
     if(!dh.isValid()) return;
     fAlg.ScanData(dh,lite_data);
   }
@@ -647,14 +635,13 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
 template<class T> void LiteScanner::ScanSimpleData(const art::Event& evt, const size_t name_index)
 { 
   auto lite_id = fAlg.ProductID<T>(name_index);
+
   auto lite_data = _mgr.get_data((::larlite::data::DataType_t)lite_id.first,lite_id.second);
   std::string label=lite_id.second;
+  //std::cout << label.substr()
   art::Handle<T> dh;
-  if(label.find("::")<label.size()) {
-    evt.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   dh);
-  }else{ evt.getByLabel(lite_id.second,dh); }
+  art::InputTag inputtag(label);
+  evt.getByLabel(inputtag,dh);
     
   if(!dh.isValid()) return;
   fAlg.ScanSimpleData(dh,lite_data);
@@ -670,11 +657,8 @@ void LiteScanner::ScanSimPhotons(const art::Event& evt, const size_t name_index)
   std::string label = lite_id.second;
   art::Handle< std::vector<sim::SimPhotons> > dh;
 
-  if(label.find("::")<label.size()) {
-    evt.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   dh);
-  }else{ evt.getByLabel(lite_id.second,dh); }
+  art::InputTag inputtag(label);
+  evt.getByLabel(inputtag,dh);
     
   if(!dh.isValid()) return;
 
@@ -721,12 +705,8 @@ template<class T> void LiteScanner::SaveAssociationSource(const art::Event& evt)
     //std::cout <<"ASS LABEL NAME !! "<< name << ", "<<lite_type<<std::endl;
 
     art::Handle<std::vector<T> > dh;
-    if(name.find("::")<name.size()) {
-      //std::cout<<"Inside label setter :"<<name.substr(0,name.find("::"))<<std::endl ;
-      evt.getByLabel(name.substr(0,name.find("::")),
-		     name.substr(name.find("::")+2,name.size()-name.find("::")-2),
-		     dh);
-    }else{ evt.getByLabel(name,dh); }
+    art::InputTag inputtag(name);
+    evt.getByLabel(inputtag,dh);
     
     if(!dh.isValid() || !(dh->size())) continue; 
 
@@ -760,14 +740,9 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
 
   //std::cout << "\nI am scanning for this assocaition : " << label << std::endl; 
   // Done adding this block in
-  
-  if(label.find("::")<label.size()) {
-    evt.getByLabel(label.substr(0,label.find("::")),
-		   label.substr(label.find("::")+2,label.size()-label.find("::")-2),
-		   dh);
-  }else{ evt.getByLabel(lite_id.second,dh); }
-
-      
+  art::InputTag inputtag(label);
+  evt.getByLabel(inputtag,dh);
+        
   if(!dh.isValid()) return;
 
   //std::cout<<"Inspecting association for type " << lite_id.first << " by " << lite_id.second << std::endl;
