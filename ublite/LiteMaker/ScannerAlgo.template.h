@@ -12,6 +12,8 @@
 #include "DataFormat/swtrigger.h"
 #include "DataFormat/potsummary.h"
 #include "DataFormat/hit.h"
+#include "DataFormat/crthit.h"
+#include "DataFormat/crttrack.h"
 #include "DataFormat/track.h"
 #include "DataFormat/mctruth.h"
 #include "DataFormat/mctree.h"
@@ -20,6 +22,7 @@
 #include "DataFormat/rawdigit.h"
 #include "DataFormat/wire.h"
 #include "DataFormat/hit.h"
+#include "DataFormat/crthit.h"
 #include "DataFormat/cluster.h"
 #include "DataFormat/shower.h"
 #include "DataFormat/mcshower.h"
@@ -880,6 +883,90 @@ namespace larlite {
   }
 
   template <>
+  void ScannerAlgo::ScanData(art::Handle<std::vector< ::crt::CRTHit> > const &dh,
+			     ::larlite::event_base* lite_dh)
+  { 
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+
+    auto lite_data = (::larlite::event_crthit*)lite_dh;
+
+    for(size_t i=0; i<dh->size(); ++i) {
+      
+      art::Ptr<::recob::CRTHit> hit_ptr(dh,i);
+      
+      ::larlite::crthit lite_hit();
+      lite_hit.feb_id = hit_ptr->at(i).feb_id;
+      lite_hit.pesmap = hit_ptr->at(i).pesmap;
+      lite_hit.peshit =  hit_ptr->at(i).peshit;
+      lite_hit.ts0_s =  hit_ptr->at(i).ts0_s;
+      lite_hit.ts0_ns =  hit_ptr->at(i).ts0_ns;
+      lite_hit.ts0_s_corr =  hit_ptr->at(i).ts0_s_corr;
+      lite_hit.ts0_ns_corr =  hit_ptr->at(i).ts0_ns_corr;
+      lite_hit.ts1_ns =  hit_ptr->at(i).ts1_ns;
+      lite_hit.x_pos =  hit_ptr->at(i).x_pos;
+      lite_hit.x_err =  hit_ptr->at(i).x_err;
+      lite_hit.y_pos =  hit_ptr->at(i).y_pos;
+      lite_hit.y_err =  hit_ptr->at(i).y_err;
+      lite_hit.z_pos =  hit_ptr->at(i).z_pos;
+      lite_hit.z_err =  hit_ptr->at(i).z_err;
+      //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
+      
+      lite_data->push_back(lite_hit);
+    }
+    
+  }
+
+  template <>
+  void ScannerAlgo::ScanData(art::Handle<std::vector< ::crt::CRTTrack> > const &dh,
+			     ::larlite::event_base* lite_dh)
+  { 
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+
+    auto lite_data = (::larlite::event_crttrack*)lite_dh;
+
+    for(size_t i=0; i<dh->size(); ++i) {
+      
+      art::Ptr<::recob::CRTTrack> trk_ptr(dh,i);
+      
+      ::larlite::crttrack lite_trk();
+      lite_trk.feb_id = trk_ptr->at(i).feb_id;
+      lite_trk.pesmap = trk_ptr->at(i).pesmap;
+      lite_trk.peshit =  trk_ptr->at(i).peshit;
+      lite_trk.ts0_s =  trk_ptr->at(i).ts0_s;
+      lite_trk.ts0_ns =  trk_ptr->at(i).ts0_ns;
+      lite_trk.ts0_s_err =  trk_ptr->at(i).ts0_s_err;
+      lite_trk.ts0_ns_err =  trk_ptr->at(i).ts0_ns_err;
+      lite_trk.ts1_ns =  trk_ptr->at(i).ts1_ns;
+      lite_trk.ts1_ns_err =  trk_ptr->at(i).ts1_ns_err;
+      lite_trk.x1_pos =  trk_ptr->at(i).x1_pos;
+      lite_trk.x1_err =  trk_ptr->at(i).x1_err;
+      lite_trk.y1_pos =  trk_ptr->at(i).y1_pos;
+      lite_trk.y1_err =  trk_ptr->at(i).y1_err;
+      lite_trk.z1_pos =  trk_ptr->at(i).z1_pos;
+      lite_trk.z1_err =  trk_ptr->at(i).z1_err;
+      lite_trk.x2_pos =  trk_ptr->at(i).x2_pos;
+      lite_trk.x2_err =  trk_ptr->at(i).x2_err;
+      lite_trk.y2_pos =  trk_ptr->at(i).y2_pos;
+      lite_trk.y2_err =  trk_ptr->at(i).y2_err;
+      lite_trk.z2_pos =  trk_ptr->at(i).z2_pos;
+      lite_trk.z2_err =  trk_ptr->at(i).z2_err;
+      lite_trk.length =  trk_ptr->at(i).length;
+      lite_trk.thetaxy=  trk_ptr->at(i).thetaxy;
+      lite_trk.phiz   =  trk_ptr->at(i).phiz;
+      lite_trk.ts0_ns_h1 =  trk_ptr->at(i).ts0_ns_h1;
+      lite_trk.ts0_ns_err_h1 =  trk_ptr->at(i).ts0_ns_err_h1;
+      lite_trk.ts0_ns_h2 =  trk_ptr->at(i).ts0_ns_h2;
+      lite_trk.ts0_ns_err_h2 =  trk_ptr->at(i).ts0_ns_err_h2;
+
+      //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
+      
+      lite_data->push_back(lite_trk);
+    }
+    
+  }
+
+  template <>
+
   void ScannerAlgo::ScanData(art::Handle<std::vector< ::recob::Cluster> > const &dh,
 			     ::larlite::event_base* lite_dh)
   { 

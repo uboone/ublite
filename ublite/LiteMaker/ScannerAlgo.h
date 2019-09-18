@@ -19,6 +19,8 @@
 // LArSoft includes
 #include "ubobj/MuCS/MuCSData.h"
 #include "ubobj/MuCS/MuCSRecoData.h"
+#include "ubobj/CRT/CRTHit.hh"
+#include "ubobj/CRT/CRTTrack.hh"
 #include "ubobj/Trigger/ubdaqSoftwareTriggerData.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lardataobj/RawData/RawDigit.h"
@@ -196,6 +198,8 @@ namespace larlite {
     std::vector< std::vector< std::map< art::Ptr<::raw::ubdaqSoftwareTriggerData>, std::pair<size_t,size_t> > > > fPtrIndex_swtrigger;
     std::vector< std::vector< std::map< art::Ptr<::recob::Wire>,       std::pair<size_t,size_t> > > > fPtrIndex_wire;
     std::vector< std::vector< std::map< art::Ptr<::recob::Hit>,        std::pair<size_t,size_t> > > > fPtrIndex_hit;
+    std::vector< std::vector< std::map< art::Ptr<::crt::CRTHit>,        std::pair<size_t,size_t> > > > fPtrIndex_crthit;
+    std::vector< std::vector< std::map< art::Ptr<::crt::CRTTrack>,        std::pair<size_t,size_t> > > > fPtrIndex_crttrack;
     std::vector< std::vector< std::map< art::Ptr<::recob::OpHit>,      std::pair<size_t,size_t> > > > fPtrIndex_ophit;
     std::vector< std::vector< std::map< art::Ptr<::recob::OpFlash>,    std::pair<size_t,size_t> > > > fPtrIndex_opflash;
     std::vector< std::vector< std::map< art::Ptr<::recob::Cluster>,    std::pair<size_t,size_t> > > > fPtrIndex_cluster;
