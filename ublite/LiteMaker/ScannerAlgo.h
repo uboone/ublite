@@ -22,8 +22,10 @@
 #include "ubobj/CRT/CRTHit.hh"
 #include "ubobj/CRT/CRTTrack.hh"
 #include "ubobj/Trigger/ubdaqSoftwareTriggerData.h"
+#include "ubobj/RawData/DAQHeaderTimeUBooNE.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lardataobj/RawData/RawDigit.h"
+#include "lardataobj/RawData/DAQHeader.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
 #include "lardataobj/RawData/TriggerData.h"
 #include "lardataobj/RecoBase/Wire.h"
@@ -148,6 +150,22 @@ namespace larlite {
     template <class T>
     void ScanSimpleData(art::Handle<T> const &dh,
 			::larlite::event_base* lite_dh);
+
+
+    /// TEST
+    template <class T, class U>
+    void ScanSimpleDataTest(art::Handle<T> const &dh,
+			 art::Handle<U> const &ddh,
+			 ::larlite::event_base* lite_dh);
+    //
+    template <class T, class U>
+    void ScanDataTest(art::Handle<std::vector<T> > const &dh,
+		     art::Handle<U> const &ddh,
+		     ::larlite::event_base* lite_dh);
+      //void ScanCRTData(art::Handle<std::vector<::crt::CRTHit> > const &dh,
+      //	     art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
+      //	     ::larlite::event_base* lite_dh);
+    /// END TEST
     
     /// Core method: generate LArLite association data product and store (in lite_dh)
     template <class T, class U>
@@ -193,6 +211,7 @@ namespace larlite {
     std::vector< std::vector< std::map< art::Ptr<::sim::MCShower>,     std::pair<size_t,size_t> > > > fPtrIndex_mcshower;
     std::vector< std::vector< std::map< art::Ptr<::sim::MCTrack>,      std::pair<size_t,size_t> > > > fPtrIndex_mctrack;
     std::vector< std::vector< std::map< art::Ptr<::raw::RawDigit>,     std::pair<size_t,size_t> > > > fPtrIndex_rawdigit;
+    std::vector< std::vector< std::map< art::Ptr<::raw::DAQHeaderTimeUBooNE>,     std::pair<size_t,size_t> > > > fPtrIndex_daqheadertimeuboone;
     std::vector< std::vector< std::map< art::Ptr<::raw::OpDetWaveform>,std::pair<size_t,size_t> > > > fPtrIndex_opdigit;
     std::vector< std::vector< std::map< art::Ptr<::raw::Trigger>,      std::pair<size_t,size_t> > > > fPtrIndex_trigger;
     std::vector< std::vector< std::map< art::Ptr<::raw::ubdaqSoftwareTriggerData>, std::pair<size_t,size_t> > > > fPtrIndex_swtrigger;

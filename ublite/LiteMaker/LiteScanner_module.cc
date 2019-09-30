@@ -30,6 +30,7 @@
 #include "ubcore/Geometry/UBOpChannelTypes.h"
 #include "ubcore/Geometry/UBOpReadoutMap.h"
 #include "ubobj/Trigger/ubdaqSoftwareTriggerData.h"
+#include "ubobj/RawData/DAQHeaderTimeUBooNE.h"
 #include "ubobj/MuCS/MuCSData.h"
 #include "ubobj/MuCS/MuCSRecoData.h"
 #include "larsim/EventWeight/Base/MCEventWeight.h"
@@ -37,6 +38,7 @@
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lardataobj/RawData/RawDigit.h"
+#include "lardataobj/RawData/DAQHeader.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
 #include "lardataobj/Simulation/SimPhotons.h"
 #include "lardataobj/RawData/TriggerData.h"
@@ -119,9 +121,11 @@ private:
 
   /// Templated data scanner function
   template<class T> void ScanData(const art::Event& evt, const size_t name_index);
+  template<class T> void ScanDataCRT(const art::Event& evt, const size_t name_index);
 
   /// Templated data scanner function
   template<class T> void ScanSimpleData(const art::Event& evt, const size_t name_index);
+  template<class T> void ScanDataDAQTime(const art::Event& evt, const size_t name_index);
 
   /// Special function for SimPhotons
   void ScanSimPhotons(const art::Event& evt, const size_t name_index);
@@ -153,6 +157,11 @@ private:
   std::string fStreamName;
   /// RawDigitproducer name (if needed) for ChStatus 
   std::string _chstatus_rawdigit_producer;
+  /// DAQHeader producer
+  std::string fDAQHeader;
+  /// DAQHeaderTimeUBooNE producer
+  std::string fDAQHeaderTimeUBooNE;
+
 };
 
 
@@ -167,6 +176,9 @@ LiteScanner::LiteScanner(fhicl::ParameterSet const & p)
   fStoreAss = p.get<bool>("store_association");
 
   _chstatus_rawdigit_producer = p.get<std::string>("RawDigit4ChStatus","");
+
+  fDAQHeader = p.get<std::string>("DAQHeaderProducer","");
+  fDAQHeaderTimeUBooNE = p.get<std::string>("DAQHeaderTimeUBProducer","");
 
   fOutFileName = p.get<std::string>("out_filename","annonymous.root");
   if(p.get<bool>("unique_filename")) {
@@ -292,6 +304,8 @@ void LiteScanner::analyze(art::Event const & e)
   SaveAssociationSource<recob::SpacePoint>(e);
   SaveAssociationSource<recob::OpHit>(e);
   SaveAssociationSource<recob::OpFlash>(e);
+  SaveAssociationSource<crt::CRTHit>(e);
+  //SaveAssociationSource<crt::CRTTrack>(e);
   SaveAssociationSource<anab::CosmicTag>(e);
   SaveAssociationSource<recob::Track>(e);
   SaveAssociationSource<recob::Seed>(e);
@@ -336,6 +350,8 @@ void LiteScanner::analyze(art::Event const & e)
 
       case ::larlite::data::kRawDigit:
 	ScanData<raw::RawDigit>(e,j); break;
+      case ::larlite::data::kDAQHeaderTimeUBooNE:
+	ScanDataDAQTime<raw::DAQHeaderTimeUBooNE>(e,j); break;
       case ::larlite::data::kOpDetWaveform:
 	ScanData<raw::OpDetWaveform>(e,j); break;
       case ::larlite::data::kTrigger:
@@ -353,6 +369,11 @@ void LiteScanner::analyze(art::Event const & e)
 	ScanData<recob::OpHit>(e,j); break;
       case ::larlite::data::kOpFlash:
 	ScanData<recob::OpFlash>(e,j); break;
+      case ::larlite::data::kCRTHit:
+	ScanDataCRT<crt::CRTHit>(e,j); break;
+      case ::larlite::data::kCRTTrack:
+	ScanDataCRT<crt::CRTTrack>(e,j); break;
+
       case ::larlite::data::kCluster:
 	ScanData<recob::Cluster>(e,j); break;
       case ::larlite::data::kCosmicTag:
@@ -498,6 +519,8 @@ void LiteScanner::analyze(art::Event const & e)
 	ScanAssociation<simb::MCParticle>(e,j); break;
       case ::larlite::data::kOpFlash:
 	ScanAssociation<recob::OpFlash>(e,j); break;
+	//case ::larlite::data::kCRTHit:
+	//ScanAssociation<crt::CRTHit>(e,j); break;
 	// Currently associations FROM the followings are not supported
       case ::larlite::data::kMuCSData:
       case ::larlite::data::kMuCSReco:
@@ -627,6 +650,44 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
     if(!dh.isValid()) return;
     fAlg.ScanData(dh,lite_data);
   }
+}
+
+template<class T> void LiteScanner::ScanDataCRT(const art::Event& evt, const size_t name_index)
+{ 
+
+  auto lite_id = fAlg.ProductID<T>(name_index);
+  std::string label = lite_id.second;
+  auto lite_data = _mgr.get_data((::larlite::data::DataType_t)lite_id.first,label);
+
+  art::Handle<std::vector<T> > dh;
+  art::Handle<::raw::DAQHeaderTimeUBooNE> ddh;
+  art::InputTag inputtag(label);
+  evt.getByLabel(inputtag, dh);
+  art::InputTag inputtag2(fDAQHeaderTimeUBooNE);
+  evt.getByLabel(inputtag2, ddh);
+  
+  if(!dh.isValid() || !ddh.isValid()) return;
+  fAlg.ScanDataTest(dh,ddh,lite_data);
+
+}
+//
+template<class T> void LiteScanner::ScanDataDAQTime(const art::Event& evt, const size_t name_index)
+{ 
+
+  auto lite_id = fAlg.ProductID<T>(name_index);
+  std::string label = lite_id.second;
+  auto lite_data = _mgr.get_data((::larlite::data::DataType_t)lite_id.first,label);
+
+  art::Handle<T> dh;
+  art::Handle<::raw::DAQHeader> ddh;
+  art::InputTag inputtag(label);
+  evt.getByLabel(inputtag, dh);
+  art::InputTag inputtag2(fDAQHeader);
+  evt.getByLabel(inputtag2, ddh);
+  
+if(!dh.isValid() || !ddh.isValid()) return;
+  fAlg.ScanSimpleDataTest(dh,ddh,lite_data);
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -785,6 +846,10 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
     case ::larlite::data::kOpFlash:
       fAlg.ScanAssociation<T, recob::OpHit      > (evt,dh,lite_ass);
       break;
+      //case ::larlite::data::kCRTHit:
+      //fAlg.ScanAssociation<T, recob::OpFlash    > (evt,dh,lite_ass);
+      //break;
+
     case ::larlite::data::kCluster:
       fAlg.ScanAssociation<T, recob::Hit        > (evt,dh,lite_ass);
       fAlg.ScanAssociation<T, recob::Vertex     > (evt,dh,lite_ass);
@@ -875,6 +940,9 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
     case ::larlite::data::kOpFlash:
       fAlg.ScanAssociation<T, recob::OpHit      > (evt,dh,lite_ass);
       break;
+      //case ::larlite::data::kCRTHit:
+      //fAlg.ScanAssociation<T, recob::OpFlash    > (evt,dh,lite_ass);
+      //break;
     case ::larlite::data::kCluster:
       fAlg.ScanAssociation<T, recob::Hit        > (evt,dh,lite_ass);
       fAlg.ScanAssociation<T, recob::Vertex     > (evt,dh,lite_ass);
