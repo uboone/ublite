@@ -16,6 +16,7 @@ litemc_mcinfo.DataLookUpMap:
   mctruth:    ["generator","corsika"]
   mctrack:    ["mcreco"]
   mcshower:   ["mcreco"]
+  mceventweight: ["eventweightLEE", "eventweight4to4aFix"]
 }
 
 litemc_mcinfo.AssociationLookUpMap: {
