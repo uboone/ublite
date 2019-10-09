@@ -12,19 +12,17 @@
 #include "DataFormat/swtrigger.h"
 #include "DataFormat/potsummary.h"
 #include "DataFormat/hit.h"
-#include "DataFormat/crthit.h"
-#include "DataFormat/crttrack.h"
 #include "DataFormat/track.h"
 #include "DataFormat/mctruth.h"
 #include "DataFormat/mctree.h"
 #include "DataFormat/user_info.h"
 #include "DataFormat/spacepoint.h"
 #include "DataFormat/rawdigit.h"
-#include "DataFormat/daqheadertimeuboone.h"
+//#include "DataFormat/daqheadertimeuboone.h"
 #include "DataFormat/wire.h"
 #include "DataFormat/hit.h"
-#include "DataFormat/crthit.h"
-#include "DataFormat/crttrack.h"
+//#include "DataFormat/crthit.h"
+//#include "DataFormat/crttrack.h"
 #include "DataFormat/cluster.h"
 #include "DataFormat/shower.h"
 #include "DataFormat/mcshower.h"
@@ -883,13 +881,13 @@ namespace larlite {
       
     }
   }
-
+  
   template <>
   void ScannerAlgo::ScanSimpleDataTest(art::Handle< ::raw::DAQHeaderTimeUBooNE> const &dh,
 				       art::Handle< ::raw::DAQHeader> const &ddh,
 				       ::larlite::event_base* lite_dh)
   { 
-      
+    /*    
       fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
       //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
 
@@ -904,14 +902,16 @@ namespace larlite {
       lite_daq.SetEventTimeStamp(ddh->GetTimeStamp());
 
       lite_data->push_back(lite_daq);
-    }
+    */
+  }
 
-
+  
   template <>
   void ScannerAlgo::ScanDataTest(art::Handle<std::vector<::crt::CRTHit> > const &dh,
 				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
 				 ::larlite::event_base* lite_dh)
   { 
+    /*
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
 
     art::Timestamp evtTimeGPS = ddh->gps_time();
@@ -943,7 +943,7 @@ namespace larlite {
       
       lite_data->push_back(lite_hit);
     }
-    
+    */
   }
 
   template <>
@@ -951,6 +951,7 @@ namespace larlite {
 				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
 				 ::larlite::event_base* lite_dh)
   { 
+    /*
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
 
     art::Timestamp evtTimeGPS = ddh->gps_time();
@@ -997,11 +998,10 @@ namespace larlite {
       
       lite_data->push_back(lite_trk);
     }
-    
+    */
   }
-
+  
   template <>
-
   void ScannerAlgo::ScanData(art::Handle<std::vector< ::recob::Cluster> > const &dh,
 			     ::larlite::event_base* lite_dh)
   { 
@@ -1583,7 +1583,7 @@ namespace larlite {
     if(fPtrIndex_hit[key1].size()<=key2) fPtrIndex_hit[key1].resize(key2+1);
     return fPtrIndex_hit[key1][key2]; 
   }
-
+  
   template <> std::map<art::Ptr< ::crt::CRTHit>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2) 
   { if(fPtrIndex_crthit.size()<=key1) fPtrIndex_crthit.resize(key1+1);
     if(fPtrIndex_crthit[key1].size()<=key2) fPtrIndex_crthit[key1].resize(key2+1);
@@ -1595,7 +1595,7 @@ namespace larlite {
     if(fPtrIndex_crttrack[key1].size()<=key2) fPtrIndex_crttrack[key1].resize(key2+1);
     return fPtrIndex_crttrack[key1][key2]; 
   }
-
+  
   template <> std::map<art::Ptr< ::raw::RawDigit>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
   { if(fPtrIndex_rawdigit.size()<=key1) fPtrIndex_rawdigit.resize(key1+1);
     if(fPtrIndex_rawdigit[key1].size()<=key2) fPtrIndex_rawdigit[key1].resize(key2+1);
@@ -1613,13 +1613,13 @@ namespace larlite {
     if(fPtrIndex_trigger[key1].size()<=key2) fPtrIndex_trigger[key1].resize(key2+1);
     return fPtrIndex_trigger[key1][key2]; 
   }
-
+  
   template <> std::map<art::Ptr< ::raw::DAQHeaderTimeUBooNE>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
   { if(fPtrIndex_daqheadertimeuboone.size()<=key1) fPtrIndex_daqheadertimeuboone.resize(key1+1);
     if(fPtrIndex_daqheadertimeuboone[key1].size()<=key2) fPtrIndex_daqheadertimeuboone[key1].resize(key2+1);
     return fPtrIndex_daqheadertimeuboone[key1][key2]; 
   }
-
+  
   template <> std::map<art::Ptr< ::raw::ubdaqSoftwareTriggerData>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
   { if(fPtrIndex_swtrigger.size()<=key1) fPtrIndex_swtrigger.resize(key1+1);
     if(fPtrIndex_swtrigger[key1].size()<=key2) fPtrIndex_swtrigger[key1].resize(key2+1);
@@ -1757,16 +1757,16 @@ namespace larlite {
   { return ::larlite::data::kOpDetWaveform; }
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::Trigger> () const
   { return ::larlite::data::kTrigger; }
-  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::DAQHeaderTimeUBooNE> () const
-  { return ::larlite::data::kTrigger; }
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::ubdaqSoftwareTriggerData> () const
-  { return ::larlite::data::kDAQHeaderTimeUBooNE; }
+  { return ::larlite::data::kSWTrigger; }
+  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::DAQHeaderTimeUBooNE> () const
+  //{ return ::larlite::data::kDAQHeaderTimeUBooNE; }
 
   // crt
-  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTHit> () const
-  { return ::larlite::data::kCRTHit; }
-  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTTrack> () const
-  { return ::larlite::data::kCRTTrack; }
+  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTHit> () const
+  //{ return ::larlite::data::kCRTHit; }
+  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTTrack> () const
+  //{ return ::larlite::data::kCRTTrack; }
 
   // recob
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::recob::Wire> () const

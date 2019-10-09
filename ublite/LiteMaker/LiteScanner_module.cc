@@ -33,6 +33,8 @@
 #include "ubobj/RawData/DAQHeaderTimeUBooNE.h"
 #include "ubobj/MuCS/MuCSData.h"
 #include "ubobj/MuCS/MuCSRecoData.h"
+#include "ubobj/CRT/CRTHit.hh"
+#include "ubobj/CRT/CRTTrack.hh"
 #include "larsim/EventWeight/Base/MCEventWeight.h"
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
@@ -304,7 +306,7 @@ void LiteScanner::analyze(art::Event const & e)
   SaveAssociationSource<recob::SpacePoint>(e);
   SaveAssociationSource<recob::OpHit>(e);
   SaveAssociationSource<recob::OpFlash>(e);
-  SaveAssociationSource<crt::CRTHit>(e);
+  //SaveAssociationSource<crt::CRTHit>(e);
   //SaveAssociationSource<crt::CRTTrack>(e);
   SaveAssociationSource<anab::CosmicTag>(e);
   SaveAssociationSource<recob::Track>(e);
@@ -350,8 +352,8 @@ void LiteScanner::analyze(art::Event const & e)
 
       case ::larlite::data::kRawDigit:
 	ScanData<raw::RawDigit>(e,j); break;
-      case ::larlite::data::kDAQHeaderTimeUBooNE:
-	ScanDataDAQTime<raw::DAQHeaderTimeUBooNE>(e,j); break;
+	//case ::larlite::data::kDAQHeaderTimeUBooNE:
+	//ScanDataDAQTime<raw::DAQHeaderTimeUBooNE>(e,j); break;
       case ::larlite::data::kOpDetWaveform:
 	ScanData<raw::OpDetWaveform>(e,j); break;
       case ::larlite::data::kTrigger:
@@ -369,10 +371,10 @@ void LiteScanner::analyze(art::Event const & e)
 	ScanData<recob::OpHit>(e,j); break;
       case ::larlite::data::kOpFlash:
 	ScanData<recob::OpFlash>(e,j); break;
-      case ::larlite::data::kCRTHit:
-	ScanDataCRT<crt::CRTHit>(e,j); break;
-      case ::larlite::data::kCRTTrack:
-	ScanDataCRT<crt::CRTTrack>(e,j); break;
+	//case ::larlite::data::kCRTHit:
+	//ScanDataCRT<crt::CRTHit>(e,j); break;
+	//case ::larlite::data::kCRTTrack:
+	//ScanDataCRT<crt::CRTTrack>(e,j); break;
 
       case ::larlite::data::kCluster:
 	ScanData<recob::Cluster>(e,j); break;
@@ -651,6 +653,7 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
     fAlg.ScanData(dh,lite_data);
   }
 }
+
 
 template<class T> void LiteScanner::ScanDataCRT(const art::Event& evt, const size_t name_index)
 { 

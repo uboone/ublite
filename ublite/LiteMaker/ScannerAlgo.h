@@ -153,6 +153,7 @@ namespace larlite {
 
 
     /// TEST
+    
     template <class T, class U>
     void ScanSimpleDataTest(art::Handle<T> const &dh,
 			 art::Handle<U> const &ddh,
@@ -162,9 +163,7 @@ namespace larlite {
     void ScanDataTest(art::Handle<std::vector<T> > const &dh,
 		     art::Handle<U> const &ddh,
 		     ::larlite::event_base* lite_dh);
-      //void ScanCRTData(art::Handle<std::vector<::crt::CRTHit> > const &dh,
-      //	     art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
-      //	     ::larlite::event_base* lite_dh);
+    
     /// END TEST
     
     /// Core method: generate LArLite association data product and store (in lite_dh)
@@ -217,8 +216,8 @@ namespace larlite {
     std::vector< std::vector< std::map< art::Ptr<::raw::ubdaqSoftwareTriggerData>, std::pair<size_t,size_t> > > > fPtrIndex_swtrigger;
     std::vector< std::vector< std::map< art::Ptr<::recob::Wire>,       std::pair<size_t,size_t> > > > fPtrIndex_wire;
     std::vector< std::vector< std::map< art::Ptr<::recob::Hit>,        std::pair<size_t,size_t> > > > fPtrIndex_hit;
-    std::vector< std::vector< std::map< art::Ptr<::crt::CRTHit>,        std::pair<size_t,size_t> > > > fPtrIndex_crthit;
-    std::vector< std::vector< std::map< art::Ptr<::crt::CRTTrack>,        std::pair<size_t,size_t> > > > fPtrIndex_crttrack;
+    std::vector< std::vector< std::map< art::Ptr<::crt::CRTHit>,       std::pair<size_t,size_t> > > > fPtrIndex_crthit;
+    std::vector< std::vector< std::map< art::Ptr<::crt::CRTTrack>,     std::pair<size_t,size_t> > > > fPtrIndex_crttrack;
     std::vector< std::vector< std::map< art::Ptr<::recob::OpHit>,      std::pair<size_t,size_t> > > > fPtrIndex_ophit;
     std::vector< std::vector< std::map< art::Ptr<::recob::OpFlash>,    std::pair<size_t,size_t> > > > fPtrIndex_opflash;
     std::vector< std::vector< std::map< art::Ptr<::recob::Cluster>,    std::pair<size_t,size_t> > > > fPtrIndex_cluster;
