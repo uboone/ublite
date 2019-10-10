@@ -18,11 +18,11 @@
 #include "DataFormat/user_info.h"
 #include "DataFormat/spacepoint.h"
 #include "DataFormat/rawdigit.h"
-//#include "DataFormat/daqheadertimeuboone.h"
+#include "DataFormat/daqheadertimeuboone.h"
 #include "DataFormat/wire.h"
 #include "DataFormat/hit.h"
-//#include "DataFormat/crthit.h"
-//#include "DataFormat/crttrack.h"
+#include "DataFormat/crthit.h"
+#include "DataFormat/crttrack.h"
 #include "DataFormat/cluster.h"
 #include "DataFormat/shower.h"
 #include "DataFormat/mcshower.h"
@@ -887,22 +887,21 @@ namespace larlite {
 				       art::Handle< ::raw::DAQHeader> const &ddh,
 				       ::larlite::event_base* lite_dh)
   { 
-    /*    
-      fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
-      //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
 
-      auto lite_data = (::larlite::event_daqheadertimeuboone*)lite_dh;
-
-      ::larlite::daqheadertimeuboone lite_daq;
-      lite_daq.SetGPSTime(dh->gps_time());
-      lite_daq.SetNTPTime(dh->ntp_time());
-      lite_daq.SetPPSTime(dh->pps_sec(), dh->pps_micro(), dh->pps_nano());
-      lite_daq.SetTrigTime(dh->trig_frame(), dh->trig_sample(), dh->trig_div());
-      lite_daq.SetTrigPPSTime(dh->trig_pps_frame(), dh->trig_pps_sample(), dh->trig_pps_div());
-      lite_daq.SetEventTimeStamp(ddh->GetTimeStamp());
-
-      lite_data->push_back(lite_daq);
-    */
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+    //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
+    
+    auto lite_data = (::larlite::event_daqheadertimeuboone*)lite_dh;
+      
+    ::larlite::daqheadertimeuboone lite_daq;
+    lite_daq.SetGPSTime(dh->gps_time());
+    lite_daq.SetNTPTime(dh->ntp_time());
+    lite_daq.SetPPSTime(dh->pps_sec(), dh->pps_micro(), dh->pps_nano());
+    lite_daq.SetTrigTime(dh->trig_frame(), dh->trig_sample(), dh->trig_div());
+    lite_daq.SetTrigPPSTime(dh->trig_pps_frame(), dh->trig_pps_sample(), dh->trig_pps_div());
+    lite_daq.SetEventTimeStamp(ddh->GetTimeStamp());
+    
+    lite_data->push_back(lite_daq);
   }
 
   
@@ -911,7 +910,7 @@ namespace larlite {
 				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
 				 ::larlite::event_base* lite_dh)
   { 
-    /*
+
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
 
     art::Timestamp evtTimeGPS = ddh->gps_time();
@@ -943,7 +942,6 @@ namespace larlite {
       
       lite_data->push_back(lite_hit);
     }
-    */
   }
 
   template <>
@@ -951,7 +949,7 @@ namespace larlite {
 				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
 				 ::larlite::event_base* lite_dh)
   { 
-    /*
+
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
 
     art::Timestamp evtTimeGPS = ddh->gps_time();
@@ -998,7 +996,7 @@ namespace larlite {
       
       lite_data->push_back(lite_trk);
     }
-    */
+
   }
   
   template <>
@@ -1759,14 +1757,14 @@ namespace larlite {
   { return ::larlite::data::kTrigger; }
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::ubdaqSoftwareTriggerData> () const
   { return ::larlite::data::kSWTrigger; }
-  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::DAQHeaderTimeUBooNE> () const
-  //{ return ::larlite::data::kDAQHeaderTimeUBooNE; }
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::DAQHeaderTimeUBooNE> () const
+  { return ::larlite::data::kDAQHeaderTimeUBooNE; }
 
   // crt
-  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTHit> () const
-  //{ return ::larlite::data::kCRTHit; }
-  //template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTTrack> () const
-  //{ return ::larlite::data::kCRTTrack; }
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTHit> () const
+  { return ::larlite::data::kCRTHit; }
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTTrack> () const
+  { return ::larlite::data::kCRTTrack; }
 
   // recob
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::recob::Wire> () const

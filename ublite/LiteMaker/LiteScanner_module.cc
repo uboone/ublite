@@ -208,7 +208,9 @@ LiteScanner::LiteScanner(fhicl::ParameterSet const & p)
       labels = data_pset.get<std::vector<std::string> >(::larlite::data::kDATA_TREE_NAME[i].c_str(),labels);
       //std::cout<<::larlite::data::kDATA_TREE_NAME[i].c_str()<<" data product..."<<std::endl;
       for(auto const& label : labels) {
-	//std::cout<<"  --"<<label.c_str()<<std::endl;
+	std::cout<<"[LiteScanner_module]"
+		 << " Register datatype="<< ::larlite::data::kDATA_TREE_NAME[i].c_str() 
+		 << " label=" << label.c_str()<<std::endl;
 	fAlg.Register(label,(::larlite::data::DataType_t)i);
       }
       labels.clear();
@@ -352,8 +354,8 @@ void LiteScanner::analyze(art::Event const & e)
 
       case ::larlite::data::kRawDigit:
 	ScanData<raw::RawDigit>(e,j); break;
-	//case ::larlite::data::kDAQHeaderTimeUBooNE:
-	//ScanDataDAQTime<raw::DAQHeaderTimeUBooNE>(e,j); break;
+      case ::larlite::data::kDAQHeaderTimeUBooNE:
+	ScanDataDAQTime<raw::DAQHeaderTimeUBooNE>(e,j); break;
       case ::larlite::data::kOpDetWaveform:
 	ScanData<raw::OpDetWaveform>(e,j); break;
       case ::larlite::data::kTrigger:
@@ -371,11 +373,10 @@ void LiteScanner::analyze(art::Event const & e)
 	ScanData<recob::OpHit>(e,j); break;
       case ::larlite::data::kOpFlash:
 	ScanData<recob::OpFlash>(e,j); break;
-	//case ::larlite::data::kCRTHit:
-	//ScanDataCRT<crt::CRTHit>(e,j); break;
-	//case ::larlite::data::kCRTTrack:
-	//ScanDataCRT<crt::CRTTrack>(e,j); break;
-
+      case ::larlite::data::kCRTHit:
+	ScanDataCRT<crt::CRTHit>(e,j); break;
+      case ::larlite::data::kCRTTrack:
+	ScanDataCRT<crt::CRTTrack>(e,j); break;
       case ::larlite::data::kCluster:
 	ScanData<recob::Cluster>(e,j); break;
       case ::larlite::data::kCosmicTag:
@@ -657,19 +658,33 @@ template<class T> void LiteScanner::ScanData(const art::Event& evt, const size_t
 
 template<class T> void LiteScanner::ScanDataCRT(const art::Event& evt, const size_t name_index)
 { 
+  std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] start " << std::endl;
 
   auto lite_id = fAlg.ProductID<T>(name_index);
   std::string label = lite_id.second;
+  std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] label=" << label << std::endl;
   auto lite_data = _mgr.get_data((::larlite::data::DataType_t)lite_id.first,label);
 
   art::Handle<std::vector<T> > dh;
   art::Handle<::raw::DAQHeaderTimeUBooNE> ddh;
+
+  std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] get crthit/track handle" << std::endl;
   art::InputTag inputtag(label);
   evt.getByLabel(inputtag, dh);
+
+  std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] get daqheader handle" << std::endl;
   art::InputTag inputtag2(fDAQHeaderTimeUBooNE);
   evt.getByLabel(inputtag2, ddh);
   
-  if(!dh.isValid() || !ddh.isValid()) return;
+  if(!dh.isValid() || !ddh.isValid()) {
+    std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] "
+	      << "invalid handles. crthit/track=" << dh.isValid() << " daqheader=" << ddh.isValid()
+	      << std::endl;
+    return;
+  }
+  std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] "
+	    << " run ScanDataTest(crthit/track,daqheader,lite_data)"
+	    << std::endl;
   fAlg.ScanDataTest(dh,ddh,lite_data);
 
 }
@@ -688,7 +703,7 @@ template<class T> void LiteScanner::ScanDataDAQTime(const art::Event& evt, const
   art::InputTag inputtag2(fDAQHeader);
   evt.getByLabel(inputtag2, ddh);
   
-if(!dh.isValid() || !ddh.isValid()) return;
+  if(!dh.isValid() || !ddh.isValid()) return;
   fAlg.ScanSimpleDataTest(dh,ddh,lite_data);
 
 }
