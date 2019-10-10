@@ -681,7 +681,8 @@ template<class T> void LiteScanner::ScanDataCRT(const art::Event& evt, const siz
     msg << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] "
 	<< "invalid handles. crthit/track=" << dh.isValid() << " daqheader=" << ddh.isValid()
 	<< std::endl;
-    throw cet::exception(msg.str());
+    std::cout << "[WARNING]: " << msg.str();
+    //throw cet::exception(msg.str());
     return;
   }
   // std::cout << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] "
@@ -705,7 +706,14 @@ template<class T> void LiteScanner::ScanDataDAQTime(const art::Event& evt, const
   art::InputTag inputtag2(fDAQHeader);
   evt.getByLabel(inputtag2, ddh);
   
-  if(!dh.isValid() || !ddh.isValid()) return;
+  if(!dh.isValid() || !ddh.isValid()) {
+    std::stringstream msg;
+    msg << "[" << __FILE__ << ".L" << __LINE__ << "::" << __FUNCTION__ << "] "
+	<< "invalid handle for DAQHeader" 
+	<< std::endl;
+    std::cout << "[WARNING]: " << msg.str();    
+    return;
+  }
   fAlg.ScanSimpleDataTest(dh,ddh,lite_data);
 
 }
