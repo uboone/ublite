@@ -1,0 +1,18 @@
+#include "litemaker_base.fcl"
+
+BEGIN_PROLOG
+
+litedatamin_crt: @local::litemaker_base
+
+litedatamin_crt.out_filename: "larlite_crt.root"
+
+litedatamin_crt.DataLookUpMap:
+{
+  crthit:   ["crthitcorr"]
+  crttrack: ["crttrack"]
+  daqheadertimeuboone: ["daq"]
+}
+litedatamin_crt.DAQHeaderProducer: "daq"
+litedatamin_crt.DAQHeaderTimeUBProducer: "daq"
+
+END_PROLOG
