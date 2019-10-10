@@ -88,6 +88,7 @@ namespace larlite {
       : fModuleLabel_v    ((size_t)(::larlite::data::kDATA_TYPE_MAX),std::vector<std::string>())
       , fAssModuleLabel_v ((size_t)(::larlite::data::kDATA_TYPE_MAX),std::vector<std::string>())
       , fDataReadFlag_v   ((size_t)(::larlite::data::kDATA_TYPE_MAX),std::map<std::string,bool>())
+      , fCRTTOffset(0.0)
     {}
     /// default dtor
     ~ScannerAlgo(){}
@@ -126,6 +127,11 @@ namespace larlite {
     /// Accessor to the list of registered associated products' producers' module labels
     std::vector<std::vector<std::string> > const& AssLabels() const { return fAssModuleLabel_v; }
 
+    /// Accessor to CRT time offset
+    float GetCRTTOffset() const { return fCRTTOffset; }
+    /// Set CRT time offset
+    void SetCRTTOffset(float crtDT) { fCRTTOffset = crtDT; } 
+
     /// Function to be called @ end or beginning of each event
     void EventClear();
 
@@ -152,8 +158,6 @@ namespace larlite {
 			::larlite::event_base* lite_dh);
 
 
-    /// TEST
-    
     template <class T, class U>
     void ScanSimpleDataTest(art::Handle<T> const &dh,
 			 art::Handle<U> const &ddh,
@@ -164,7 +168,6 @@ namespace larlite {
 		     art::Handle<U> const &ddh,
 		     ::larlite::event_base* lite_dh);
     
-    /// END TEST
     
     /// Core method: generate LArLite association data product and store (in lite_dh)
     template <class T, class U>
@@ -199,6 +202,9 @@ namespace larlite {
 
     /// Boolean holder to tell us whether specific producer's data is read or not
     std::vector<std::map<std::string,bool> > fDataReadFlag_v;
+
+    /// Float holder for CRT DT offset
+    float fCRTTOffset;
 
     // art::Ptr local storage. Value = index of data product & index of label
     std::vector< std::vector< std::map< art::Ptr<::simb::MCTruth>,     std::pair<size_t,size_t> > > > fPtrIndex_mctruth;

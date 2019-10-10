@@ -937,7 +937,7 @@ namespace larlite {
       lite_hit.y_err =  hit_ptr->y_err;
       lite_hit.z_pos =  hit_ptr->z_pos;
       lite_hit.z_err =  hit_ptr->z_err;
-      lite_hit.ts2_ns = hit_ptr->ts0_ns - evt_timeGPS_ns; 
+      lite_hit.ts2_ns = hit_ptr->ts0_ns - evt_timeGPS_ns + fCRTTOffset; 
       //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
       
       lite_data->push_back(lite_hit);
@@ -990,8 +990,8 @@ namespace larlite {
       lite_trk.ts0_ns_err_h1 =  trk_ptr->ts0_ns_err_h1;
       lite_trk.ts0_ns_h2 =  trk_ptr->ts0_ns_h2;
       lite_trk.ts0_ns_err_h2 =  trk_ptr->ts0_ns_err_h2;
-      lite_trk.ts2_ns_h1 =  trk_ptr->ts0_ns_h1 - evt_timeGPS_ns;
-      lite_trk.ts2_ns_h2 =  trk_ptr->ts0_ns_h2 - evt_timeGPS_ns;
+      lite_trk.ts2_ns_h1 =  trk_ptr->ts0_ns_h1 - evt_timeGPS_ns + fCRTTOffset;
+      lite_trk.ts2_ns_h2 =  trk_ptr->ts0_ns_h2 - evt_timeGPS_ns + fCRTTOffset;
       //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
       
       lite_data->push_back(lite_trk);

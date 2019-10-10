@@ -163,6 +163,8 @@ private:
   std::string fDAQHeader;
   /// DAQHeaderTimeUBooNE producer
   std::string fDAQHeaderTimeUBooNE;
+  /// CRTTime offset in ns
+  float fCRTTimeOffset;
 
 };
 
@@ -181,6 +183,9 @@ LiteScanner::LiteScanner(fhicl::ParameterSet const & p)
 
   fDAQHeader = p.get<std::string>("DAQHeaderProducer","");
   fDAQHeaderTimeUBooNE = p.get<std::string>("DAQHeaderTimeUBProducer","");
+
+  fCRTTimeOffset = p.get<float>("CRTTimeOffset",0.0);
+  fAlg.SetCRTTOffset(fCRTTimeOffset);
 
   fOutFileName = p.get<std::string>("out_filename","annonymous.root");
   if(p.get<bool>("unique_filename")) {
