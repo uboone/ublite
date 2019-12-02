@@ -931,6 +931,7 @@ namespace larlite {
       lite_hit.ts0_s_corr =  hit_ptr->ts0_s_corr;
       lite_hit.ts0_ns_corr =  hit_ptr->ts0_ns_corr;
       lite_hit.ts1_ns =  hit_ptr->ts1_ns;
+      lite_hit.plane =  hit_ptr->plane;
       lite_hit.x_pos =  hit_ptr->x_pos;
       lite_hit.x_err =  hit_ptr->x_err;
       lite_hit.y_pos =  hit_ptr->y_pos;
@@ -971,6 +972,8 @@ namespace larlite {
       lite_trk.ts0_ns_err =  trk_ptr->ts0_ns_err;
       lite_trk.ts1_ns =  trk_ptr->ts1_ns;
       lite_trk.ts1_ns_err =  trk_ptr->ts1_ns_err;
+      lite_trk.plane1 =  trk_ptr->plane1;
+      lite_trk.plane2 =  trk_ptr->plane2;
       lite_trk.x1_pos =  trk_ptr->x1_pos;
       lite_trk.x1_err =  trk_ptr->x1_err;
       lite_trk.y1_pos =  trk_ptr->y1_pos;
