@@ -848,7 +848,8 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
     std::cout << "LArLite product type: " << lite_id.first
 	      << " ... label: " << lite_id.second
 	      << " ... pointer: " << lite_ass << std::endl;
-    */    
+    */
+
     switch(lite_id.first){
     case ::larlite::data::kUndefined:    break;
     case ::larlite::data::kEvent:        break;
@@ -971,7 +972,13 @@ template<class T> void LiteScanner::ScanAssociation(const art::Event& evt, const
       break;
     case ::larlite::data::kOpHit:        break;
     case ::larlite::data::kOpFlash:
-      fAlg.ScanAssociation<T, recob::OpHit      > (evt,dh,lite_ass);
+      try {
+	fAlg.ScanAssociation<T, recob::OpHit      > (evt,dh,lite_ass);
+      } catch ( std::exception& e ) {
+	std::cout << "[WARNING!!!] Caught exception trying to make association with ophit/opflash. "
+		  << " Skipping for now. This is a hack that needs to be fixed." 
+		  << std::endl;
+      }
       break;
       //case ::larlite::data::kCRTHit:
       //fAlg.ScanAssociation<T, recob::OpFlash    > (evt,dh,lite_ass);
