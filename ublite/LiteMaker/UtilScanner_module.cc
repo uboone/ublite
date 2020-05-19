@@ -1,4 +1,3 @@
-
 #ifndef UtilScanner_H
 #define UtilScanner_H
 
@@ -27,6 +26,7 @@
 #include "larcore/Geometry/Geometry.h"
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
 #include "lardata/Utilities/GeometryUtilities.h"
+#include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "ubcore/Geometry/UBOpReadoutMap.h"
 
@@ -272,23 +272,24 @@ namespace ana {
   {
     if(_detp_tree) return;
     art::ServiceHandle<art::TFileService>  fileService;    
-    auto const* _detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
+    auto const clockData = art::ServiceHandle<detinfo::DetectorClocksService>()->DataForJob();
+    auto const detProp = art::ServiceHandle<detinfo::DetectorPropertiesService>()->DataForJob(clockData);
     auto const* _geom = lar::providerFrom<geo::Geometry>();
     TTree* _detp_tree = fileService->make<TTree>("DetectorProperties","");
 
     //--- Fill Variables ---//
-    Double_t fSamplingRate = _detp-> SamplingRate();          ///< in ns
-    Int_t    fTriggerOffset = _detp->TriggerOffset();         ///< in # of clock ticks
-    Double_t fElectronsToADC = _detp->ElectronsToADC();       ///< conversion factor for # of ionization electrons to 1 ADC count
-    UInt_t   fNumberTimeSamples = _detp->NumberTimeSamples(); ///< number of clock ticks per event
-    UInt_t   fReadOutWindowSize = _detp->ReadOutWindowSize(); ///< number of clock ticks per readout window
-    Double_t fTimeOffsetU = _detp->TimeOffsetU();             ///< time offsets to convert spacepoint
-    Double_t fTimeOffsetV = _detp->TimeOffsetV();             ///< coordinates to hit times on each
-    Double_t fTimeOffsetZ = _detp->TimeOffsetZ();             ///< view
-    Double_t fXTicksCoefficient = _detp->GetXTicksCoefficient(); ///< Parameters for x<-->ticks
+    Double_t fSamplingRate = sampling_rate(clockData);         ///< in ns
+    Int_t    fTriggerOffset = trigger_offset(clockData);       ///< in # of clock ticks
+    Double_t fElectronsToADC = detProp.ElectronsToADC();       ///< conversion factor for # of ionization electrons to 1 ADC count
+    UInt_t   fNumberTimeSamples = detProp.NumberTimeSamples(); ///< number of clock ticks per event
+    UInt_t   fReadOutWindowSize = detProp.ReadOutWindowSize(); ///< number of clock ticks per readout window
+    Double_t fTimeOffsetU = detProp.TimeOffsetU();             ///< time offsets to convert spacepoint
+    Double_t fTimeOffsetV = detProp.TimeOffsetV();             ///< coordinates to hit times on each
+    Double_t fTimeOffsetZ = detProp.TimeOffsetZ();             ///< view
+    Double_t fXTicksCoefficient = detProp.GetXTicksCoefficient(); ///< Parameters for x<-->ticks
     std::vector<Double_t> fXTicksOffsets(_geom->Nplanes(),3);
     for(unsigned int i=0; i<fXTicksOffsets.size(); ++i)
-      fXTicksOffsets[i] = _detp->GetXTicksOffset(i,0,0);
+      fXTicksOffsets[i] = detProp.GetXTicksOffset(i,0,0);
 
     //--- Set TTree Branches ---//
     _detp_tree->Branch("fSamplingRate",&fSamplingRate,"fSamplingRate/D");
@@ -311,14 +312,14 @@ namespace ana {
   {
     if(_larp_tree) return;
     auto const* _larp = lar::providerFrom<detinfo::LArPropertiesService>();
-    auto const* _detp = lar::providerFrom<detinfo::DetectorPropertiesService>();
     auto const* _geom = lar::providerFrom<geo::Geometry>();
 
     //--- Fill Variables ---//
     std::vector< Double_t >          fEfield(_geom->Nplanes(),0);
-    for(size_t i=0; i<fEfield.size(); ++i) { fEfield[i]=_detp->Efield(i);}
-    Double_t                         fTemperature = _detp->Temperature();
-    Double_t                         fElectronlifetime = _detp->ElectronLifetime(); ///< microseconds
+    auto const detProp = art::ServiceHandle<detinfo::DetectorPropertiesService>()->DataForJob();
+    for(size_t i=0; i<fEfield.size(); ++i) { fEfield[i]=detProp.Efield(i);}
+    Double_t                         fTemperature = detProp.Temperature();
+    Double_t                         fElectronlifetime = detProp.ElectronLifetime(); ///< microseconds
     Double_t                         fRadiationLength = _larp->RadiationLength();  ///< g/cm^2
 
     Double_t                         fArgon39DecayRate = _larp->Argon39DecayRate(); ///<  decays per cm^3 per second
