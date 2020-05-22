@@ -36,6 +36,7 @@
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
+#include "larcorealg/Geometry/geo_vectors_utils_TVector.h" // toTVector3()
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
 #include "lardataobj/Simulation/SimPhotons.h"
@@ -690,8 +691,8 @@ void LiteScanner::ScanSimPhotons(const art::Event& evt, const size_t name_index)
     for(auto const& ph : simph) {
 
       lite_photon.SetInSD = ph.SetInSD;
-      lite_photon.InitialPosition = ph.InitialPosition;
-      lite_photon.FinalLocalPosition = ph.FinalLocalPosition;
+      lite_photon.InitialPosition = geo::vect::toTVector3(ph.InitialPosition);
+      lite_photon.FinalLocalPosition = geo::vect::toTVector3(ph.FinalLocalPosition);
       lite_photon.Time = ph.Time;
       lite_photon.Energy = ph.Energy;
 
