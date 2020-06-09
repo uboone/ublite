@@ -59,6 +59,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   LLMetaMaker_service
 		   ubobj_MuCS
 		   ubobj_Trigger
+                   lardataalg_DetectorInfo
 		   larcorealg_Geometry
 		   ubcore_Geometry
 		   larcore_Geometry_Geometry_service
