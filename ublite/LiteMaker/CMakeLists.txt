@@ -35,7 +35,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   ${LARDATA_LIB}
 		   ${ART_FRAMEWORK_CORE}
 		   ${ART_FRAMEWORK_PRINCIPAL}
-                   ${ART_FRAMEWORK_BASIC}
+
 		   ${ART_FRAMEWORK_SERVICES_REGISTRY}
 		   ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
 		   ${ART_ROOT_IO_TFILESERVICE_SERVICE}
@@ -43,15 +43,15 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   art_Persistency_Provenance canvas
 		   art_Utilities canvas
 		   ${MF_MESSAGELOGGER}
-		   
+
 		   ${FHICLCPP}
 		   cetlib cetlib_except
 		   ${ROOT_GEOM}
 		   ${ROOT_XMLIO}
 		   ${ROOT_GDML}
-		   ${ROOT_BASIC_LIB_LIST}
 
-          MODULE_LIBRARIES 	  		   
+
+          MODULE_LIBRARIES
 		   uboonecode_uboone_LiteMaker
 		   ubraw_RawData
 	      	   TFileMetadataMicroBooNE_service
@@ -80,7 +80,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   ${LARDATA_LIB}
 		   ${ART_FRAMEWORK_CORE}
 		   ${ART_FRAMEWORK_PRINCIPAL}
-                   ${ART_FRAMEWORK_BASIC}
+
 		   ${ART_FRAMEWORK_SERVICES_REGISTRY}
 		   ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
 		   ${ART_ROOT_IO_TFILESERVICE_SERVICE}
@@ -88,26 +88,26 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   art_Persistency_Provenance canvas
 		   art_Utilities canvas
 		   ${MF_MESSAGELOGGER}
-		   
+
 		   ${FHICLCPP}
 		   cetlib cetlib_except
 		   ${ROOT_GEOM}
 		   ${ROOT_XMLIO}
 		   ${ROOT_GDML}
-		   ${ROOT_BASIC_LIB_LIST}
+
 		)
 
 simple_plugin(LLMetaMaker "service"
 	      TFileMetadataMicroBooNE_service
 	      FileCatalogMetadataMicroBooNE_service
-	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}	      
+	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}
               art_Framework_Principal
 	      art_Utilities canvas
 	      ${MF_MESSAGELOGGER}
-	      
+
 	      ${FHICLCPP}
 	      cetlib cetlib_except
-	      ${ROOT_BASIC_LIB_LIST}
+
               BASENAME_ONLY
 )
 
