@@ -54,8 +54,8 @@ art_make( EXCLUDE LLMetaMaker_service.cc
           MODULE_LIBRARIES
 		   uboonecode_uboone_LiteMaker
 		   ubraw_RawData
-	      	   TFileMetadataMicroBooNE_service
-	      	   FileCatalogMetadataMicroBooNE_service
+	      	   ubevt::TFileMetadataMicroBooNE_service
+	      	   ubevt::FileCatalogMetadataMicroBooNE_service
 		   LLMetaMaker_service
 		   ubobj_MuCS
 		   ubobj_Trigger
@@ -98,8 +98,8 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		)
 
 simple_plugin(LLMetaMaker "service"
-	      TFileMetadataMicroBooNE_service
-	      FileCatalogMetadataMicroBooNE_service
+	      ubevt::TFileMetadataMicroBooNE_service
+	      ubevt::FileCatalogMetadataMicroBooNE_service
 	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}
               art_Framework_Principal
 	      art_Utilities canvas
