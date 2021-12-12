@@ -30,8 +30,8 @@ table_fragment_end
 # Add the dependent product and version
 
 product                 version
-ubana                   v09_39_00
-larpandora              v09_11_00
+ubana                   v09_39_01
+larpandora              v09_11_01
 larlite                 v06_71_00d
 cetbuildtools	        v8_18_09	-	only_for_build
 end_product_list
