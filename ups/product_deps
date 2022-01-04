@@ -31,7 +31,7 @@ table_fragment_end
 
 product                 version
 ubana                   v09_40_00
-larpandora              v09_11_02
+larpandora              v09_12_00
 larlite                 v06_71_00d
 cetbuildtools	        v8_18_09	-	only_for_build
 end_product_list
