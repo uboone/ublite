@@ -5,7 +5,7 @@ set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -lLArLite_Base -lLArLite_DataFormat -lLA
 
 include_directories ( $ENV{LARLITE_COREDIR} )
 
-link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} ${LARLITE_LIB}) # All execs need this.
+link_libraries( ${LIB_NAME} ${ROOTLIB} ${LARLITE_LIB}) # All execs need this.
 
 add_subdirectory(job)
 
