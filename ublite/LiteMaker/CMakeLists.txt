@@ -3,8 +3,6 @@
 
 set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -lLArLite_Base -lLArLite_DataFormat -lLArLite_LArUtil)
 
-set( UBOONECODE_LIB -L$ENV{UBOONECODE_LIB} )
-
 include_directories ( $ENV{LARLITE_COREDIR} )
 
 link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} ${LARLITE_LIB}) # All execs need this.
@@ -29,10 +27,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   larcoreobj_SummaryData
 		   lardataobj_RawData
 		   lardata_RecoObjects
-		   ${UBOONECODE_LIB}
 		   nusimdata::SimulationBase
-		   ${LARRECO_LIB}
-		   ${LARDATA_LIB}
 		   art::Framework_Core
 		   art::Framework_Principal
 
@@ -74,10 +69,7 @@ art_make( EXCLUDE LLMetaMaker_service.cc
                    larevt_Filters
                    larevt_CalibrationDBI_IOVData
                    larevt_CalibrationDBI_Providers
-		   ${UBOONECODE_LIB}
 		   nusimdata::SimulationBase
-		   ${LARRECO_LIB}
-		   ${LARDATA_LIB}
 		   art::Framework_Core
 		   art::Framework_Principal
 
@@ -100,7 +92,6 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 simple_plugin(LLMetaMaker "service"
 	      ubevt::TFileMetadataMicroBooNE_service
 	      ubevt::FileCatalogMetadataMicroBooNE_service
-	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}
               art::Framework_Principal
 	      art::Utilities canvas::canvas
 	      messagefacility::MF_MessageLogger
