@@ -1,11 +1,8 @@
-# define ROOTLIB
-#set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl)
-
 set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -lLArLite_Base -lLArLite_DataFormat -lLArLite_LArUtil)
 
 include_directories ( $ENV{LARLITE_COREDIR} )
 
-link_libraries( ${LIB_NAME} ${ROOTLIB} ${LARLITE_LIB}) # All execs need this.
+link_libraries( ${LARLITE_LIB}) # All execs need this.
 
 add_subdirectory(job)
 
