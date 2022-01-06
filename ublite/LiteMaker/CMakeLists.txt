@@ -31,9 +31,10 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   art::Framework_Services_Registry
 		   art_root_io::tfile_support ROOT::Core
 		   art_root_io::TFileService_service
-		   art::Persistency_Common canvas::canvas
-		   art::Persistency_Provenance canvas::canvas
-		   art::Utilities canvas::canvas
+		   art::Persistency_Common
+		   art::Persistency_Provenance
+		   art::Utilities
+                   canvas::canvas
 		   messagefacility::MF_MessageLogger
 
 		   fhiclcpp::fhiclcpp
@@ -74,9 +75,10 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   art::Framework_Services_Registry
 		   art_root_io::tfile_support ROOT::Core
 		   art_root_io::TFileService_service
-		   art::Persistency_Common canvas::canvas
-		   art::Persistency_Provenance canvas::canvas
-		   art::Utilities canvas::canvas
+		   art::Persistency_Common
+		   art::Persistency_Provenance
+		   art::Utilities
+                   canvas::canvas
 		   messagefacility::MF_MessageLogger
 
 		   fhiclcpp::fhiclcpp
@@ -92,7 +94,8 @@ simple_plugin(LLMetaMaker "service"
 	      ubevt::TFileMetadataMicroBooNE_service
 	      ubevt::FileCatalogMetadataMicroBooNE_service
               art::Framework_Principal
-	      art::Utilities canvas::canvas
+	      art::Utilities
+              canvas::canvas
 	      messagefacility::MF_MessageLogger
 
 	      fhiclcpp::fhiclcpp
