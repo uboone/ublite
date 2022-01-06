@@ -37,7 +37,8 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   messagefacility::MF_MessageLogger
 
 		   fhiclcpp::fhiclcpp
-		   cetlib::cetlib cetlib_except
+		   cetlib::cetlib
+                   cetlib_except::cetlib_except
 		   ROOT::Geom
 		   ROOT::XMLIO
 		   ROOT::Gdml
@@ -79,7 +80,8 @@ art_make( EXCLUDE LLMetaMaker_service.cc
 		   messagefacility::MF_MessageLogger
 
 		   fhiclcpp::fhiclcpp
-		   cetlib::cetlib cetlib_except
+		   cetlib::cetlib
+                   cetlib_except::cetlib_except
 		   ROOT::Geom
 		   ROOT::XMLIO
 		   ROOT::Gdml
@@ -94,7 +96,8 @@ simple_plugin(LLMetaMaker "service"
 	      messagefacility::MF_MessageLogger
 
 	      fhiclcpp::fhiclcpp
-	      cetlib::cetlib cetlib_except
+	      cetlib::cetlib
+              cetlib_except::cetlib_except
 
               BASENAME_ONLY
 )
