@@ -24,6 +24,7 @@
 #include "larcorealg/Geometry/OpDetGeo.h"
 #include "larcorealg/Geometry/WireGeo.h"
 #include "larcore/Geometry/Geometry.h"
+#include "larcore/CoreUtils/ServiceUtil.h" // lar::providerFrom<>()
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
 #include "lardata/Utilities/GeometryUtilities.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"

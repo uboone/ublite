@@ -36,6 +36,7 @@
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larcore/Geometry/Geometry.h"
+#include "larcore/CoreUtils/ServiceUtil.h" // lar::providerFrom<>()
 #include "larcorealg/Geometry/geo_vectors_utils_TVector.h" // toTVector3()
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
