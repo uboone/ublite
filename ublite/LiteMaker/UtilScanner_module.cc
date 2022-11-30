@@ -152,10 +152,10 @@ namespace ana {
       fChannelToPlaneMap[i]=wids[0].Plane;
       fChannelToWireMap[i]=wids[0].Wire;
       if(!(fWireStartVtx.at(wids[0].Plane).size())) {
-	fWireStartVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].Plane),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
-	fWireEndVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].Plane),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
+        fWireStartVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
+        fWireEndVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
       }
-      _geom->WireEndPoints(0,0,wids[0].Plane,wids[0].Wire,start,end);
+      _geom->WireEndPoints(wids[0],start,end);
       for(size_t coord =0; coord<3; ++coord) {
 	fWireStartVtx.at(wids[0].Plane).at(wids[0].Wire).at(coord) = start[coord];
 	fWireEndVtx.at(wids[0].Plane).at(wids[0].Wire).at(coord) = end[coord];
@@ -168,13 +168,14 @@ namespace ana {
     std::vector<larlite::geo::View_t> fViewType(_geom->Nplanes(),larlite::geo::kUnknown);
     std::vector<Double_t> fPlanePitch(_geom->Nplanes(),-1.);
 
-    for(size_t i=0; i<_geom->Nplanes(); ++i) {
+    for(auto const& plane : _geom->Iterate<geo::PlaneGeo>(geo::TPCID{0, 0})) {
+      auto const i = plane.ID().Plane;
       fSignalType[i] = (larlite::geo::SigType_t)(_geom->SignalType(i));
-      fViewType[i]   = (larlite::geo::View_t)(_geom->Plane(i).View());
-      fPlanePitch[i] = _geom->Plane(i).WirePitch();
-      std::vector<UShort_t> wire_to_channel(_geom->Plane(i).Nwires(),larlite::data::kINVALID_USHORT);
-      for(size_t j=0; j<_geom->Plane(i).Nwires(); ++j)
-	wire_to_channel[j]=_geom->PlaneWireToChannel(i,j);
+      fViewType[i]   = (larlite::geo::View_t)(plane.View());
+      fPlanePitch[i] = plane.WirePitch();
+      std::vector<UShort_t> wire_to_channel(plane.Nwires(),larlite::data::kINVALID_USHORT);
+      for(size_t j=0; j<plane.Nwires(); ++j)
+        wire_to_channel[j]=_geom->PlaneWireToChannel(geo::WireID(plane.ID(), j));
       fPlaneWireToChannelMap[i]=wire_to_channel;
     }
   
@@ -184,12 +185,11 @@ namespace ana {
     size_t view_max = (*(views.rbegin()));
     std::vector<Double_t> fWirePitch(view_max+1,larlite::data::kINVALID_DOUBLE);
     std::vector<Double_t> fWireAngle(view_max+1,larlite::data::kINVALID_DOUBLE);
-    for(auto iter=views.begin(); iter!=views.end(); ++iter) {
-      fWirePitch[(size_t)((*iter))]=_geom->WirePitch((*iter));
-      fWireAngle[(size_t)((*iter))]=_geom->WireAngleToVertical((*iter));
+    for(geo::View_t const view : views) {
+      fWirePitch[(size_t)view]=_geom->WirePitch(view);
+      fWireAngle[(size_t)view]=_geom->WireAngleToVertical(view, geo::TPCID{0, 0});
     }
 
-    Double_t xyz[3]={0.};
     std::vector<std::vector<Float_t> > fOpChannelVtx;
     std::vector<unsigned int> fOpChannel2OpDet;
     ::art::ServiceHandle<geo::UBOpReadoutMap> ub_geom;
@@ -213,29 +213,28 @@ namespace ana {
 
       fOpChannel2OpDet[ch] = _geom->OpDetFromOpChannel(ch);
       
-      _geom->OpDetGeoFromOpChannel(ch).GetCenter(xyz);
-      fOpChannelVtx[ch][0]=xyz[0];
-      fOpChannelVtx[ch][1]=xyz[1];
-      fOpChannelVtx[ch][2]=xyz[2];
+      auto const xyz = _geom->OpDetGeoFromOpChannel(ch).GetCenter();
+      fOpChannelVtx[ch][0]=xyz.X();
+      fOpChannelVtx[ch][1]=xyz.Y();
+      fOpChannelVtx[ch][2]=xyz.Z();
     }
 
     std::vector<std::vector<Float_t> > fOpDetVtx(_geom->Cryostat().NOpDet(),std::vector<Float_t>(3,-1.));
     for(size_t i=0; i<_geom->Cryostat().NOpDet(); ++i) {
 
-      _geom->Cryostat().OpDet(i).GetCenter(xyz);
-
-      fOpDetVtx[i][0]=xyz[0];
-      fOpDetVtx[i][1]=xyz[1];
-      fOpDetVtx[i][2]=xyz[2];
+      auto const xyz = _geom->Cryostat().OpDet(i).GetCenter();
+      fOpDetVtx[i][0]=xyz.X();
+      fOpDetVtx[i][1]=xyz.Y();
+      fOpDetVtx[i][2]=xyz.Z();
     }
 
     std::vector<std::vector<Double_t> > fPlaneOriginVtx(_geom->Nplanes(),std::vector<Double_t>(3,larlite::data::kINVALID_DOUBLE));
-    const Double_t orig[3]={0.};
-    for(size_t i=0; i<_geom->Nplanes(); ++i) {
-      _geom->Plane(i).LocalToWorld(orig,xyz);
-      fPlaneOriginVtx[i][0] = xyz[0];
-      fPlaneOriginVtx[i][1] = xyz[1];
-      fPlaneOriginVtx[i][2] = xyz[2];
+    for(auto const& plane : _geom->Iterate<geo::PlaneGeo>()) {
+      auto const i = plane.ID().Plane;
+      auto const xyz = plane.GetBoxCenter();
+      fPlaneOriginVtx[i][0] = xyz.X();
+      fPlaneOriginVtx[i][1] = xyz.Y();
+      fPlaneOriginVtx[i][2] = xyz.Z();
     }
 
     _geom_tree->Branch("fDetLength",&fDetLength,"fDetLength/D");
