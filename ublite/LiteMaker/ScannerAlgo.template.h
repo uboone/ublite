@@ -1709,27 +1709,11 @@ namespace larlite {
     //larlite::product_id ass_id_a(ass_type_a,dh.provenance()->moduleLabel());
     larlite::product_id ass_id_a(ass_type_a,lite_dh->name());
 
-    try{
       if(!ptr_coll_v.size()) {
 	//std::cout << "Empty!" << std::endl;
 	return;
       }
-      const std::vector<art::Ptr<U> > ptr_coll = ptr_coll_v.at(0);
 
-      //std::cout << "Got " << ptr_coll_v.size() << " associations!" << std::flush;
-      if(!ptr_coll.empty()) {
-	auto const& aptr = ptr_coll.front();
-	auto const& pid  = aptr.id();
-	art::Handle< std::vector<U> > u_handle;
-	e.get(pid,u_handle);
-	//std::cout << " first product by " << u_handle.provenance()->moduleLabel() << std::endl;
-      }
-      //else{ std::cout << std::endl; }
-
-    }catch( art::Exception const& e){
-      //std::cout << "Something went wrong!" << std::endl;
-      return;
-    }
     // Instantiate association container. length = # of producers for associated data type
     std::vector< ::larlite::AssSet_t> ass_set_v(fAssModuleLabel_v[ass_type_b].size(),
 						::larlite::AssSet_t());
