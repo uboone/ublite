@@ -33,7 +33,7 @@ product                 version
 ubana                   v09_74_01
 larpandora              v09_20_01
 larlite                 v06_71_00e
-cetbuildtools	        v8_18_09	-	only_for_build
+cetbuildtools	        v8_20_00	-	only_for_build
 end_product_list
 
 qualifier      ubana          larpandora     larlite        
