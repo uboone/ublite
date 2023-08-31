@@ -251,6 +251,7 @@ product		version		qual	flags		<table_format=2>
 larlite		v06_71_00f	-
 larpandora	v09_21_06	-
 ubana		v09_78_01	-
+ubcv            v09_78_01	-	only_for_build
 cetmodules	v3_21_01	-	only_for_build
 end_product_list
 ####################################
@@ -306,11 +307,11 @@ end_product_list
 #   case it is optional.
 #
 ####################################
-qualifier	ubana		larpandora	larlite
-c7:debug	c7:debug	c7:debug	c7:debug
-c7:prof		c7:prof		c7:prof		c7:prof
-e20:debug	e20:debug	e20:debug	e20:debug
-e20:prof	e20:prof	e20:prof	e20:prof
+qualifier	ubana		larpandora	larlite		ubcv
+c7:debug	c7:debug	c7:debug	c7:debug	c7:debug
+c7:prof		c7:prof		c7:prof		c7:prof		c7:prof
+e20:debug	e20:debug	e20:debug	e20:debug	e20:debug
+e20:prof	e20:prof	e20:prof	e20:prof	e20:prof
 end_qualifier_list
 ####################################
 

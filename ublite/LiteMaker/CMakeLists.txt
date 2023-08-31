@@ -1,9 +1,3 @@
-set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -lLArLite_Base -lLArLite_DataFormat -lLArLite_LArUtil)
-
-link_libraries( ${LARLITE_LIB}) # All execs need this.
-
-include_directories ( $ENV{LARLITE_COREDIR} )
-
 cet_make_library(
   SOURCE
   ScannerAlgo.cxx
@@ -22,6 +16,7 @@ cet_make_library(
   art::Framework_Principal
   canvas::canvas
   messagefacility::MF_MessageLogger
+  larlite::DataFormat
 )
 
 cet_build_plugin(
@@ -56,6 +51,7 @@ cet_build_plugin(
   lardata::DetectorPropertiesService
   lardata::DetectorClocksService
   larcore::Geometry_Geometry_service
+  larlite::DataFormat
   art_root_io::TFileService_service
   ROOT::Tree
 )

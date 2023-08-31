@@ -23,6 +23,7 @@ cet_set_compiler_flags(DIAGS CAUTIOUS
 cet_report_compiler_flags(REPORT_THRESHOLD VERBOSE)
 
 find_package( ubevt REQUIRED EXPORT )
+find_package( ubcv REQUIRED EXPORT )
 find_package( ubcore REQUIRED EXPORT )
 find_package( larsim REQUIRED EXPORT )
 
