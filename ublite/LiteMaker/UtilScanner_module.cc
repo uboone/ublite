@@ -18,6 +18,7 @@
 #include "canvas/Persistency/Common/PtrVector.h"
 
 // LArSoft includes
+#include "larcore/Geometry/WireReadout.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcorealg/Geometry/CryostatGeo.h"
 #include "larcorealg/Geometry/PlaneGeo.h"
@@ -133,29 +134,34 @@ namespace ana {
     TTree* _geom_tree = fileService->make<TTree>("Geometry","");
 
     //---Fill Variables ---//
-    Double_t fDetLength = _geom->DetLength();
-    Double_t fDetHalfWidth = _geom->DetHalfWidth();
-    Double_t fDetHalfHeight = _geom->DetHalfHeight();
+    auto const& tpc = _geom->TPC();
+    Double_t fDetLength = tpc.Length();
+    Double_t fDetHalfWidth = tpc.HalfWidth();
+    Double_t fDetHalfHeight = tpc.HalfHeight();
 
-    Double_t fCryoLength = _geom->CryostatLength();
-    Double_t fCryoHalfWidth = _geom->CryostatHalfWidth();
-    Double_t fCryoHalfHeight = _geom->CryostatHalfHeight();
+    auto const& cryostat = _geom->Cryostat();
+    Double_t fCryoLength = cryostat.Length();
+    Double_t fCryoHalfWidth = cryostat.HalfWidth();
+    Double_t fCryoHalfHeight = cryostat.HalfHeight();
 
     Double_t start[3]={0.};
     Double_t end[3]={0.};
-    std::vector<UChar_t>                fChannelToPlaneMap(_geom->Nchannels(),larlite::data::kINVALID_UCHAR);
-    std::vector<UShort_t>               fChannelToWireMap(_geom->Nchannels(),larlite::data::kINVALID_USHORT);
-    std::vector<std::vector<std::vector<Double_t> > > fWireStartVtx(_geom->Nplanes(),std::vector<std::vector<Double_t> >());
-    std::vector<std::vector<std::vector<Double_t> > > fWireEndVtx(_geom->Nplanes(),std::vector<std::vector<Double_t> >());    
-    for(size_t i=0; i<_geom->Nchannels(); ++i) {
-      std::vector<geo::WireID> wids = _geom->ChannelToWire(i);
+    auto const& channelMap = art::ServiceHandle<geo::WireReadout const>()->Get();
+    std::vector<UChar_t>                fChannelToPlaneMap(channelMap.Nchannels(),larlite::data::kINVALID_UCHAR);
+    std::vector<UShort_t>               fChannelToWireMap(channelMap.Nchannels(),larlite::data::kINVALID_USHORT);
+
+    unsigned int const nplanes = channelMap.Nplanes({0, 0});
+    std::vector<std::vector<std::vector<Double_t> > > fWireStartVtx(nplanes ,std::vector<std::vector<Double_t> >());
+    std::vector<std::vector<std::vector<Double_t> > > fWireEndVtx(nplanes ,std::vector<std::vector<Double_t> >());
+    for(size_t i=0; i<channelMap.Nchannels(); ++i) {
+      std::vector<geo::WireID> wids = channelMap.ChannelToWire(i);
       fChannelToPlaneMap[i]=wids[0].Plane;
       fChannelToWireMap[i]=wids[0].Wire;
       if(!(fWireStartVtx.at(wids[0].Plane).size())) {
-        fWireStartVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
-        fWireEndVtx.at(wids[0].Plane).resize(_geom->Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
+        fWireStartVtx.at(wids[0].Plane).resize(channelMap.Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
+        fWireEndVtx.at(wids[0].Plane).resize(channelMap.Nwires(wids[0].asPlaneID()),std::vector<double>(3,larlite::data::kINVALID_DOUBLE));
       }
-      _geom->WireEndPoints(wids[0],start,end);
+      channelMap.WireEndPoints(wids[0],start,end);
       for(size_t coord =0; coord<3; ++coord) {
 	fWireStartVtx.at(wids[0].Plane).at(wids[0].Wire).at(coord) = start[coord];
 	fWireEndVtx.at(wids[0].Plane).at(wids[0].Wire).at(coord) = end[coord];
@@ -163,31 +169,31 @@ namespace ana {
     }
 
     // Vectors with length = # planes
-    std::vector<std::vector<UShort_t> > fPlaneWireToChannelMap(_geom->Nplanes(),std::vector<UShort_t>());
-    std::vector<larlite::geo::SigType_t> fSignalType(_geom->Nplanes(),larlite::geo::kMysteryType);
-    std::vector<larlite::geo::View_t> fViewType(_geom->Nplanes(),larlite::geo::kUnknown);
-    std::vector<Double_t> fPlanePitch(_geom->Nplanes(),-1.);
+    std::vector<std::vector<UShort_t> > fPlaneWireToChannelMap(nplanes,std::vector<UShort_t>());
+    std::vector<larlite::geo::SigType_t> fSignalType(nplanes,larlite::geo::kMysteryType);
+    std::vector<larlite::geo::View_t> fViewType(nplanes,larlite::geo::kUnknown);
+    std::vector<Double_t> fPlanePitch(nplanes,-1.);
 
-    for(auto const& plane : _geom->Iterate<geo::PlaneGeo>(geo::TPCID{0, 0})) {
+    for(auto const& plane : channelMap.Iterate<geo::PlaneGeo>(geo::TPCID{0, 0})) {
       auto const i = plane.ID().Plane;
-      fSignalType[i] = (larlite::geo::SigType_t)(_geom->SignalType(i));
+      fSignalType[i] = (larlite::geo::SigType_t)(channelMap.SignalType(plane.ID()));
       fViewType[i]   = (larlite::geo::View_t)(plane.View());
       fPlanePitch[i] = plane.WirePitch();
       std::vector<UShort_t> wire_to_channel(plane.Nwires(),larlite::data::kINVALID_USHORT);
       for(size_t j=0; j<plane.Nwires(); ++j)
-        wire_to_channel[j]=_geom->PlaneWireToChannel(geo::WireID(plane.ID(), j));
+        wire_to_channel[j]=channelMap.PlaneWireToChannel(geo::WireID(plane.ID(), j));
       fPlaneWireToChannelMap[i]=wire_to_channel;
     }
   
     // Vectors with length = view
     // Find the maximum view type value
-    std::set<geo::View_t> views = _geom->Views();
+    std::set<geo::View_t> views = channelMap.Views();
     size_t view_max = (*(views.rbegin()));
     std::vector<Double_t> fWirePitch(view_max+1,larlite::data::kINVALID_DOUBLE);
     std::vector<Double_t> fWireAngle(view_max+1,larlite::data::kINVALID_DOUBLE);
     for(geo::View_t const view : views) {
-      fWirePitch[(size_t)view]=_geom->WirePitch(view);
-      fWireAngle[(size_t)view]=_geom->WireAngleToVertical(view, geo::TPCID{0, 0});
+      fWirePitch[(size_t)view]=channelMap.Plane({0, 0, view}).WirePitch();
+      fWireAngle[(size_t)view]=channelMap.WireAngleToVertical(view, geo::TPCID{0, 0});
     }
 
     std::vector<std::vector<Float_t> > fOpChannelVtx;
@@ -201,9 +207,9 @@ namespace ana {
       if(fOpChannelVtx.size()<=ch) fOpChannelVtx.resize(ch+1,std::vector<Float_t>(3,larlite::data::kINVALID_FLOAT));
 
       bool skip=true;
-      for(size_t i=0; i<_geom->Cryostat().NOpDet(); ++i) {
+      for(size_t i=0; i<cryostat.NOpDet(); ++i) {
 	try{
-	  skip = !(_geom->OpDetFromOpChannel(ch) < _geom->Cryostat().NOpDet());
+          skip = !(channelMap.OpDetFromOpChannel(ch) < cryostat.NOpDet());
 	}catch(...){
 	  skip = true;
 	}
@@ -211,25 +217,25 @@ namespace ana {
       }
       if(skip) continue;
 
-      fOpChannel2OpDet[ch] = _geom->OpDetFromOpChannel(ch);
+      fOpChannel2OpDet[ch] = channelMap.OpDetFromOpChannel(ch);
       
-      auto const xyz = _geom->OpDetGeoFromOpChannel(ch).GetCenter();
+      auto const xyz = channelMap.OpDetGeoFromOpChannel(ch).GetCenter();
       fOpChannelVtx[ch][0]=xyz.X();
       fOpChannelVtx[ch][1]=xyz.Y();
       fOpChannelVtx[ch][2]=xyz.Z();
     }
 
-    std::vector<std::vector<Float_t> > fOpDetVtx(_geom->Cryostat().NOpDet(),std::vector<Float_t>(3,-1.));
-    for(size_t i=0; i<_geom->Cryostat().NOpDet(); ++i) {
+    std::vector<std::vector<Float_t> > fOpDetVtx(cryostat.NOpDet(),std::vector<Float_t>(3,-1.));
+    for(size_t i=0; i<cryostat.NOpDet(); ++i) {
 
-      auto const xyz = _geom->Cryostat().OpDet(i).GetCenter();
+      auto const xyz = cryostat.OpDet(i).GetCenter();
       fOpDetVtx[i][0]=xyz.X();
       fOpDetVtx[i][1]=xyz.Y();
       fOpDetVtx[i][2]=xyz.Z();
     }
 
-    std::vector<std::vector<Double_t> > fPlaneOriginVtx(_geom->Nplanes(),std::vector<Double_t>(3,larlite::data::kINVALID_DOUBLE));
-    for(auto const& plane : _geom->Iterate<geo::PlaneGeo>()) {
+    std::vector<std::vector<Double_t> > fPlaneOriginVtx(channelMap.Nplanes(),std::vector<Double_t>(3,larlite::data::kINVALID_DOUBLE));
+    for(auto const& plane : channelMap.Iterate<geo::PlaneGeo>()) {
       auto const i = plane.ID().Plane;
       auto const xyz = plane.GetBoxCenter();
       fPlaneOriginVtx[i][0] = xyz.X();
@@ -274,7 +280,7 @@ namespace ana {
     art::ServiceHandle<art::TFileService>  fileService;    
     auto const clockData = art::ServiceHandle<detinfo::DetectorClocksService>()->DataForJob();
     auto const detProp = art::ServiceHandle<detinfo::DetectorPropertiesService>()->DataForJob(clockData);
-    auto const* _geom = lar::providerFrom<geo::Geometry>();
+    auto const& channelMap = art::ServiceHandle<geo::WireReadout const>()->Get();
     TTree* _detp_tree = fileService->make<TTree>("DetectorProperties","");
 
     //--- Fill Variables ---//
@@ -287,7 +293,7 @@ namespace ana {
     Double_t fTimeOffsetV = detProp.TimeOffsetV();             ///< coordinates to hit times on each
     Double_t fTimeOffsetZ = detProp.TimeOffsetZ();             ///< view
     Double_t fXTicksCoefficient = detProp.GetXTicksCoefficient(); ///< Parameters for x<-->ticks
-    std::vector<Double_t> fXTicksOffsets(_geom->Nplanes(),3);
+    std::vector<Double_t> fXTicksOffsets(channelMap.Nplanes({0, 0}),3);
     for(unsigned int i=0; i<fXTicksOffsets.size(); ++i)
       fXTicksOffsets[i] = detProp.GetXTicksOffset(i,0,0);
 
@@ -312,10 +318,10 @@ namespace ana {
   {
     if(_larp_tree) return;
     auto const* _larp = lar::providerFrom<detinfo::LArPropertiesService>();
-    auto const* _geom = lar::providerFrom<geo::Geometry>();
+    auto const& channelMap = art::ServiceHandle<geo::WireReadout>()->Get();
 
     //--- Fill Variables ---//
-    std::vector< Double_t >          fEfield(_geom->Nplanes(),0);
+    std::vector< Double_t >          fEfield(channelMap.Nplanes({0, 0}),0);
     auto const detProp = art::ServiceHandle<detinfo::DetectorPropertiesService>()->DataForJob();
     for(size_t i=0; i<fEfield.size(); ++i) { fEfield[i]=detProp.Efield(i);}
     Double_t                         fTemperature = detProp.Temperature();
