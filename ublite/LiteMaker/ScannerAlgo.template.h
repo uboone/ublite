@@ -750,7 +750,7 @@ namespace larlite {
       lite_hit.set_time_range(hit_ptr->StartTick(),hit_ptr->EndTick());
       lite_hit.set_time_peak(hit_ptr->PeakTime(),hit_ptr->SigmaPeakTime());
       lite_hit.set_amplitude(hit_ptr->PeakAmplitude(),hit_ptr->SigmaPeakAmplitude());
-      lite_hit.set_sumq(hit_ptr->SummedADC());
+      lite_hit.set_sumq(hit_ptr->ROISummedADC());
       lite_hit.set_integral(hit_ptr->Integral(),hit_ptr->SigmaIntegral());
       lite_hit.set_multiplicity(hit_ptr->Multiplicity());
       lite_hit.set_local_index(hit_ptr->LocalIndex());
@@ -909,7 +909,7 @@ namespace larlite {
 				cluster_ptr->IntegralStdDev(), 
 				cluster_ptr->IntegralAverage());
       
-      lite_cluster.set_summedADC(cluster_ptr->SummedADC(),
+      lite_cluster.set_summedADC(cluster_ptr->ROISummedADC(),
 				 cluster_ptr->SummedADCstdDev(),
 				 cluster_ptr->SummedADCaverage());
 
