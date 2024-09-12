@@ -909,7 +909,7 @@ namespace larlite {
 				cluster_ptr->IntegralStdDev(), 
 				cluster_ptr->IntegralAverage());
       
-      lite_cluster.set_summedADC(cluster_ptr->ROISummedADC(),
+      lite_cluster.set_summedADC(cluster_ptr->SummedADC(),
 				 cluster_ptr->SummedADCstdDev(),
 				 cluster_ptr->SummedADCaverage());
 
