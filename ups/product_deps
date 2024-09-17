@@ -249,9 +249,9 @@ fwdir	product_dir	scripts
 ####################################
 product		version		qual	flags		<table_format=2>
 larlite		v06_71_00i	-
-larpandora	v09_22_08	-
-ubana		v09_91_01	-
-ubcv            v09_91_00	-	only_for_build
+larpandora	v09_22_14	-
+ubana		v09_92_00	-
+ubcv            v09_92_00	-	only_for_build
 cetmodules	v3_24_01	-	only_for_build
 end_product_list
 ####################################
