@@ -1,3 +1,7 @@
+
+#set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -llarlite_Base -llarlite_DataFormat -llarlite_LArUtil)
+#include_directories ( $ENV{LARLITE_BASEDIR}/build/installed/include/larlite $ENV{LARLITE_BASEDIR}/build/installed/include )
+
 cet_make_library(
   SOURCE
   ScannerAlgo.cxx

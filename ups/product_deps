@@ -77,6 +77,7 @@
 #
 #>  no_fq_dir
 
+
 ##################
 # define_pythonpath
 ##################
@@ -248,13 +249,14 @@ fwdir	product_dir	scripts
 #
 ####################################
 product		version		qual	flags		<table_format=2>
-larlite		v06_71_00i	-
+ubdl		v2_me_06_03	-
 larpandora	v10_00_14	-
 ubana		v10_04_05	-
 ubcv            v10_04_05	-	only_for_build
 cetmodules	v3_24_01	-	only_for_build
 end_product_list
 ####################################
+
 
 ####################################
 # Qualifier table.
@@ -307,7 +309,7 @@ end_product_list
 #   case it is optional.
 #
 ####################################
-qualifier	ubana		larpandora	larlite		ubcv
+qualifier	ubana		larpandora	ubdl		ubcv
 c14:debug       c14:debug       c14:debug       c14:debug       c14:debug
 c14:prof        c14:prof        c14:prof        c14:prof        c14:prof
 c7:debug	c7:debug	c7:debug	c7:debug	c7:debug
