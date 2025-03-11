@@ -1,117 +1,73 @@
-# define ROOTLIB
-#set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl)
 
-#set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -lLArLite_Base -lLArLite_DataFormat -lLArLite_LArUtil)
-set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -llarlite_Base -llarlite_DataFormat -llarlite_LArUtil)
+#set( LARLITE_LIB -L$ENV{LARLITE_LIBDIR} -llarlite_Base -llarlite_DataFormat -llarlite_LArUtil)
+#include_directories ( $ENV{LARLITE_BASEDIR}/build/installed/include/larlite $ENV{LARLITE_BASEDIR}/build/installed/include )
 
-set( UBOONECODE_LIB -L$ENV{UBOONECODE_LIB} )
+cet_make_library(
+  SOURCE
+  ScannerAlgo.cxx
+  LIBRARIES
+  PUBLIC
+  ubcore::Geometry
+  ubobj::Trigger
+  ubobj::MuCS
+  larsim::EventWeight_Base
+  lardata::LArPropertiesService
+  larcore::Geometry_Geometry_service
+  lardataobj::RawData
+  lardataobj::RecoBase
+  lardataobj::MCBase
+  nusimdata::SimulationBase
+  art::Framework_Principal
+  canvas::canvas
+  messagefacility::MF_MessageLogger
+  larlite::DataFormat
+)
 
-#include_directories ( $ENV{LARLITE_COREDIR} )
-include_directories ( $ENV{LARLITE_BASEDIR}/build/installed/include/larlite $ENV{LARLITE_BASEDIR}/build/installed/include )
+cet_build_plugin(
+  LiteScanner art::EDAnalyzer
+  LIBRARIES
+  PRIVATE
+  ublite::LiteMaker
+  ubcore::Geometry
+  ubobj::Trigger
+  ubobj::MuCS
+  larsim::EventWeight_Base
+  larevt::ChannelStatusService
+  lardata::Utilities
+  lardata::LArPropertiesService
+  lardata::DetectorPropertiesService
+  lardata::DetectorClocksService
+  larcore::Geometry_Geometry_service
+  lardataobj::RawData
+  lardataobj::RecoBase
+  lardataobj::MCBase
+  lardataobj::AnalysisBase
+  nusimdata::SimulationBase
+)
 
-link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} ${LARLITE_LIB}) # All execs need this.
+cet_build_plugin(
+  UtilScanner art::EDAnalyzer
+  LIBRARIES
+  PRIVATE
+  ubcore::Geometry
+  lardata::Utilities
+  lardata::LArPropertiesService
+  lardata::DetectorPropertiesService
+  lardata::DetectorClocksService
+  larcore::Geometry_Geometry_service
+  larlite::DataFormat
+  art_root_io::TFileService_service
+  ROOT::Tree
+)
+
+cet_build_plugin(
+  LLMetaMaker art::service
+  LIBRARIES
+  PUBLIC
+  ubevt::Utilities
+)
 
 add_subdirectory(job)
-
-art_make( EXCLUDE LLMetaMaker_service.cc
-	  BASENAME_ONLY
-	  LIBRARY_NAME     uboonecode_uboone_LiteMaker
-	  LIB_LIBRARIES
-		   ubraw_RawData
-	  	   larcorealg_Geometry
-		   ubcore_Geometry
-		   ubobj_MuCS
-		   ubobj_Trigger
-		   larcore_Geometry_Geometry_service
-	   	   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
-		   larsim_MCCheater_ParticleInventoryService_service
-		   lardataobj_RecoBase
-		   nusimdata_SimulationBase
-		   lardataobj_MCBase
-		   larcoreobj_SummaryData
-		   lardataobj_RawData
-		   lardata_RecoObjects larreco_Deprecated
-		   ${UBOONECODE_LIB}
-		   nusimdata_SimulationBase
-		   ${LARRECO_LIB}
-		   ${LARDATA_LIB}
-		   ${ART_FRAMEWORK_CORE}
-		   ${ART_FRAMEWORK_PRINCIPAL}
-                   ${ART_FRAMEWORK_BASIC}
-		   ${ART_FRAMEWORK_SERVICES_REGISTRY}
-		   ${ART_FRAMEWORK_SERVICES_OPTIONAL}
-		   ${ART_FRAMEWORK_SERVICES_OPTIONAL_TFILESERVICE_SERVICE}
-		   art_Persistency_Common canvas
-		   art_Persistency_Provenance canvas
-		   art_Utilities canvas
-		   ${MF_MESSAGELOGGER}
-		   
-		   ${FHICLCPP}
-		   cetlib cetlib_except
-		   ${ROOT_GEOM}
-		   ${ROOT_XMLIO}
-		   ${ROOT_GDML}
-		   ${ROOT_BASIC_LIB_LIST}
-
-          MODULE_LIBRARIES 	  		   
-		   uboonecode_uboone_LiteMaker
-		   ubraw_RawData
-	      	   TFileMetadataMicroBooNE_service
-	      	   FileCatalogMetadataMicroBooNE_service
-		   LLMetaMaker_service
-		   ubobj_MuCS
-		   ubobj_Trigger
-		   larcorealg_Geometry
-		   ubcore_Geometry
-		   larcore_Geometry_Geometry_service
-		   larsim_Simulation nutools_ParticleNavigation lardataobj_Simulation
-		   nusimdata_SimulationBase
-		   lardata_Utilities
-		   lardataobj_MCBase
-		   larcoreobj_SummaryData
-		   lardataobj_RawData
-		   lardataobj_RecoBase
-		   lardata_RecoObjects larreco_Deprecated
-                   larevt_Filters
-                   larevt_CalibrationDBI_IOVData
-                   larevt_CalibrationDBI_Providers
-		   ${UBOONECODE_LIB}
-		   nusimdata_SimulationBase
-		   ${LARRECO_LIB}
-		   ${LARDATA_LIB}
-		   ${ART_FRAMEWORK_CORE}
-		   ${ART_FRAMEWORK_PRINCIPAL}
-                   ${ART_FRAMEWORK_BASIC}
-		   ${ART_FRAMEWORK_SERVICES_REGISTRY}
-		   ${ART_FRAMEWORK_SERVICES_OPTIONAL}
-		   ${ART_FRAMEWORK_SERVICES_OPTIONAL_TFILESERVICE_SERVICE}
-		   art_Persistency_Common canvas
-		   art_Persistency_Provenance canvas
-		   art_Utilities canvas
-		   ${MF_MESSAGELOGGER}
-		   
-		   ${FHICLCPP}
-		   cetlib cetlib_except
-		   ${ROOT_GEOM}
-		   ${ROOT_XMLIO}
-		   ${ROOT_GDML}
-		   ${ROOT_BASIC_LIB_LIST}
-		)
-
-simple_plugin(LLMetaMaker "service"
-	      TFileMetadataMicroBooNE_service
-	      FileCatalogMetadataMicroBooNE_service
-	      ubraw_RawData
-	      ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}	      
-              art_Framework_Principal
-	      art_Utilities canvas
-	      ${MF_MESSAGELOGGER}
-	      
-	      ${FHICLCPP}
-	      cetlib cetlib_except
-	      ${ROOT_BASIC_LIB_LIST}
-              BASENAME_ONLY
-)
 
 # install_headers()
 install_fhicl()

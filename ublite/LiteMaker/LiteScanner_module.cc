@@ -38,7 +38,8 @@
 #include "larsim/EventWeight/Base/MCEventWeight.h"
 
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
-#include "larcore/Geometry/Geometry.h"
+#include "larcore/Geometry/WireReadout.h"
+#include "larcorealg/Geometry/geo_vectors_utils_TVector.h" // toTVector3()
 #include "lardataobj/RawData/RawDigit.h"
 #include "lardataobj/RawData/DAQHeader.h"
 #include "lardataobj/RawData/OpDetWaveform.h"
@@ -72,7 +73,6 @@
 #include "lardataobj/MCBase/MCTrack.h"
 #include "larcoreobj/SummaryData/POTSummary.h"
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
-#include "lardata/Utilities/GeometryUtilities.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
@@ -560,9 +560,9 @@ void LiteScanner::analyze(art::Event const & e)
 void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
 { 
   auto lite_chstatus = _mgr.get_data<larlite::event_chstatus>(name);
-  auto const* geom = ::lar::providerFrom<geo::Geometry>();
+  auto const& channelMap = art::ServiceHandle<geo::WireReadout const>()->Get();
 
-  std::vector<bool> filled_ch( geom->Nchannels(), false );
+  std::vector<bool> filled_ch( channelMap.Nchannels(), false );
   std::map<geo::PlaneID,std::vector<short> > status_m;
 
   // If specified check RawDigit pedestal value: if negative this channel is not used by wire (set status=>-2)
@@ -577,12 +577,12 @@ void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
       auto const ch = digit.Channel();
       if(ch >= filled_ch.size()) throw ::larlite::DataFormatException("Found RawDigit > possible channel number!");
       if(digit.GetPedestal()<0.) {
-	auto const wid =  geom->ChannelToWire(ch).front();
+        auto const wid =  channelMap.ChannelToWire(ch).front();
 	auto iter = status_m.find(wid.planeID());
 	if(iter != status_m.end())
 	  (*iter).second[wid.Wire] = -2;
 	else{
-	  std::vector<short> status_v(geom->Nwires(wid.planeID()),5);
+          std::vector<short> status_v(channelMap.Nwires(wid.planeID()),5);
 	  status_v[wid.Wire] = -2;
 	  status_m.emplace(wid.planeID(),status_v);
 	}
@@ -593,9 +593,9 @@ void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
 
   // Set database status                                                                                                                                
   const lariov::ChannelStatusProvider& chanFilt = art::ServiceHandle<lariov::ChannelStatusService>()->GetProvider();
-  for(size_t i=0; i < geom->Nchannels(); ++i) {
+  for(size_t i=0; i < channelMap.Nchannels(); ++i) {
     if ( filled_ch[i] ) continue;
-    auto const wid =  geom->ChannelToWire(i).front();
+    auto const wid =  channelMap.ChannelToWire(i).front();
     short status = 0;
     if (!chanFilt.IsPresent(i)) status = -1;
     else status = (short)(chanFilt.Status(i));
@@ -604,7 +604,7 @@ void LiteScanner::FillChStatus(const art::Event& e, const std::string& name)
     if(iter != status_m.end())
       (*iter).second[wid.Wire] = status;
     else{
-      std::vector<short> status_v(geom->Nwires(wid.planeID()),5);
+      std::vector<short> status_v(channelMap.Nwires(wid.planeID()),5);
       status_v[wid.Wire] = status;
       status_m.emplace(wid.planeID(),status_v);
     }    
@@ -768,8 +768,8 @@ void LiteScanner::ScanSimPhotons(const art::Event& evt, const size_t name_index)
     for(auto const& ph : simph) {
 
       lite_photon.SetInSD = ph.SetInSD;
-      lite_photon.InitialPosition = ph.InitialPosition;
-      lite_photon.FinalLocalPosition = ph.FinalLocalPosition;
+      lite_photon.InitialPosition = geo::vect::toTVector3(ph.InitialPosition);
+      lite_photon.FinalLocalPosition = geo::vect::toTVector3(ph.FinalLocalPosition);
       lite_photon.Time = ph.Time;
       lite_photon.Energy = ph.Energy;
 
