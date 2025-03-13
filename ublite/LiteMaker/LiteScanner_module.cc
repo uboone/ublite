@@ -23,8 +23,8 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // LArLite include
-#include "DataFormat/storage_manager.h"
-#include "DataFormat/potsummary.h"
+#include "larlite/DataFormat/storage_manager.h"
+#include "larlite/DataFormat/potsummary.h"
 
 // LArSoft includes
 #include "ubcore/Geometry/UBOpChannelTypes.h"
@@ -79,9 +79,9 @@
 //// New Data Product
 #include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 
-#include "DataFormat/simphotons.h"
-#include "DataFormat/chstatus.h"
-#include "DataFormat/DataFormatException.h"
+#include "larlite/DataFormat/simphotons.h"
+#include "larlite/DataFormat/chstatus.h"
+#include "larlite/DataFormat/DataFormatException.h"
 #include "ScannerAlgo.h"
 #include "LLMetaMaker.h"
 //#include "ScannerAlgo.template.h"
