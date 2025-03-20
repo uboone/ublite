@@ -33,14 +33,14 @@
 #include "ubcore/Geometry/UBOpReadoutMap.h"
 
 // LArLite
-#include "Base/Base-TypeDef.h"
-#include "Base/AnalysisConstants.h"
-#include "Base/DataFormatConstants.h"
-#include "Base/FrameworkConstants.h"
-#include "Base/GeoConstants.h"
-#include "Base/GeoTypes.h"
-#include "Base/MCConstants.h"
-#include "Base/RawConstants.h"
+#include "larlite/Base/Base-TypeDef.h"
+#include "larlite/Base/AnalysisConstants.h"
+#include "larlite/Base/DataFormatConstants.h"
+#include "larlite/Base/FrameworkConstants.h"
+#include "larlite/Base/GeoConstants.h"
+#include "larlite/Base/GeoTypes.h"
+#include "larlite/Base/MCConstants.h"
+#include "larlite/Base/RawConstants.h"
 
 // ART includes.
 

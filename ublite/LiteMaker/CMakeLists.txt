@@ -1,3 +1,4 @@
+
 cet_make_library(
   SOURCE
   ScannerAlgo.cxx
@@ -52,6 +53,7 @@ cet_build_plugin(
   lardata::DetectorClocksService
   larcore::Geometry_Geometry_service
   larlite::DataFormat
+  larlite::Base
   art_root_io::TFileService_service
   ROOT::Tree
 )

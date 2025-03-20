@@ -4,46 +4,49 @@
 #include "ubcore/Geometry/UBOpChannelTypes.h"
 #include "ubcore/Geometry/UBOpReadoutMap.h"
 
-#include "DataFormat/event_ass.h"
-#include "DataFormat/sparse_vector.h"
-#include "DataFormat/opdetwaveform.h"
-#include "DataFormat/simphotons.h"
-#include "DataFormat/trigger.h"
-#include "DataFormat/swtrigger.h"
-#include "DataFormat/potsummary.h"
-#include "DataFormat/hit.h"
-#include "DataFormat/track.h"
-#include "DataFormat/mctruth.h"
-#include "DataFormat/mctree.h"
-#include "DataFormat/user_info.h"
-#include "DataFormat/spacepoint.h"
-#include "DataFormat/rawdigit.h"
-#include "DataFormat/wire.h"
-#include "DataFormat/hit.h"
-#include "DataFormat/cluster.h"
-#include "DataFormat/shower.h"
-#include "DataFormat/mcshower.h"
-#include "DataFormat/mctrack.h"
-#include "DataFormat/simch.h"
-#include "DataFormat/auxsimch.h"
-#include "DataFormat/calorimetry.h"
-#include "DataFormat/vertex.h"
-#include "DataFormat/endpoint2d.h"
-#include "DataFormat/seed.h"
-#include "DataFormat/cosmictag.h"
-#include "DataFormat/opflash.h"
-#include "DataFormat/ophit.h"
-#include "DataFormat/mcflux.h"
-#include "DataFormat/pfpart.h"
-#include "DataFormat/partid.h"
-#include "DataFormat/gtruth.h"
-#include "DataFormat/minos.h"
-#include "DataFormat/pcaxis.h"
-#include "DataFormat/flashmatch.h"
-#include "DataFormat/mucsdata.h"
-#include "DataFormat/mucsreco.h"
-#include "DataFormat/chstatus.h"
-#include "DataFormat/mceventweight.h"
+#include "larlite/DataFormat/event_ass.h"
+#include "larlite/DataFormat/sparse_vector.h"
+#include "larlite/DataFormat/opdetwaveform.h"
+#include "larlite/DataFormat/simphotons.h"
+#include "larlite/DataFormat/trigger.h"
+#include "larlite/DataFormat/swtrigger.h"
+#include "larlite/DataFormat/potsummary.h"
+#include "larlite/DataFormat/hit.h"
+#include "larlite/DataFormat/track.h"
+#include "larlite/DataFormat/mctruth.h"
+#include "larlite/DataFormat/mctree.h"
+#include "larlite/DataFormat/user_info.h"
+#include "larlite/DataFormat/spacepoint.h"
+#include "larlite/DataFormat/rawdigit.h"
+#include "larlite/DataFormat/daqheadertimeuboone.h"
+#include "larlite/DataFormat/wire.h"
+#include "larlite/DataFormat/hit.h"
+#include "larlite/DataFormat/crthit.h"
+#include "larlite/DataFormat/crttrack.h"
+#include "larlite/DataFormat/cluster.h"
+#include "larlite/DataFormat/shower.h"
+#include "larlite/DataFormat/mcshower.h"
+#include "larlite/DataFormat/mctrack.h"
+#include "larlite/DataFormat/simch.h"
+#include "larlite/DataFormat/auxsimch.h"
+#include "larlite/DataFormat/calorimetry.h"
+#include "larlite/DataFormat/vertex.h"
+#include "larlite/DataFormat/endpoint2d.h"
+#include "larlite/DataFormat/seed.h"
+#include "larlite/DataFormat/cosmictag.h"
+#include "larlite/DataFormat/opflash.h"
+#include "larlite/DataFormat/ophit.h"
+#include "larlite/DataFormat/mcflux.h"
+#include "larlite/DataFormat/pfpart.h"
+#include "larlite/DataFormat/partid.h"
+#include "larlite/DataFormat/gtruth.h"
+#include "larlite/DataFormat/minos.h"
+#include "larlite/DataFormat/pcaxis.h"
+#include "larlite/DataFormat/flashmatch.h"
+#include "larlite/DataFormat/mucsdata.h"
+#include "larlite/DataFormat/mucsreco.h"
+#include "larlite/DataFormat/chstatus.h"
+#include "larlite/DataFormat/mceventweight.h"
 #include <TStopwatch.h>
 /*
   This file defines certain specilization of templated functions.
@@ -878,7 +881,127 @@ namespace larlite {
       
     }
   }
+  
+  template <>
+  void ScannerAlgo::ScanSimpleDataTest(art::Handle< ::raw::DAQHeaderTimeUBooNE> const &dh,
+				       art::Handle< ::raw::DAQHeader> const &ddh,
+				       ::larlite::event_base* lite_dh)
+  { 
 
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+    //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
+    
+    auto lite_data = (::larlite::event_daqheadertimeuboone*)lite_dh;
+      
+    ::larlite::daqheadertimeuboone lite_daq;
+    lite_daq.SetGPSTime(dh->gps_time());
+    lite_daq.SetNTPTime(dh->ntp_time());
+    lite_daq.SetPPSTime(dh->pps_sec(), dh->pps_micro(), dh->pps_nano());
+    lite_daq.SetTrigTime(dh->trig_frame(), dh->trig_sample(), dh->trig_div());
+    lite_daq.SetTrigPPSTime(dh->trig_pps_frame(), dh->trig_pps_sample(), dh->trig_pps_div());
+    lite_daq.SetEventTimeStamp(ddh->GetTimeStamp());
+    
+    lite_data->push_back(lite_daq);
+  }
+
+  
+  template <>
+  void ScannerAlgo::ScanDataTest(art::Handle<std::vector<::crt::CRTHit> > const &dh,
+				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
+				 ::larlite::event_base* lite_dh)
+  { 
+
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+
+    art::Timestamp evtTimeGPS = ddh->gps_time();
+    float evt_timeGPS_ns = evtTimeGPS.timeLow();
+
+    auto lite_data = (::larlite::event_crthit*)lite_dh;
+
+    for(size_t i=0; i<dh->size(); ++i) {
+      
+      art::Ptr<::crt::CRTHit> hit_ptr(dh,i);
+      
+      ::larlite::crthit lite_hit;
+      lite_hit.feb_id = hit_ptr->feb_id;
+      lite_hit.pesmap = hit_ptr->pesmap;
+      lite_hit.peshit =  hit_ptr->peshit;
+      lite_hit.ts0_s =  hit_ptr->ts0_s;
+      lite_hit.ts0_ns =  hit_ptr->ts0_ns;
+      lite_hit.ts0_s_corr =  hit_ptr->ts0_s_corr;
+      lite_hit.ts0_ns_corr =  hit_ptr->ts0_ns_corr;
+      lite_hit.ts1_ns =  hit_ptr->ts1_ns;
+      lite_hit.plane =  hit_ptr->plane;
+      lite_hit.x_pos =  hit_ptr->x_pos;
+      lite_hit.x_err =  hit_ptr->x_err;
+      lite_hit.y_pos =  hit_ptr->y_pos;
+      lite_hit.y_err =  hit_ptr->y_err;
+      lite_hit.z_pos =  hit_ptr->z_pos;
+      lite_hit.z_err =  hit_ptr->z_err;
+      lite_hit.ts2_ns = hit_ptr->ts0_ns - evt_timeGPS_ns + fCRTTOffset; 
+      //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
+      
+      lite_data->push_back(lite_hit);
+    }
+  }
+
+  template <>
+  void ScannerAlgo::ScanDataTest(art::Handle<std::vector< ::crt::CRTTrack> > const &dh,
+				 art::Handle<::raw::DAQHeaderTimeUBooNE> const &ddh,
+				 ::larlite::event_base* lite_dh)
+  { 
+
+    fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
+
+    art::Timestamp evtTimeGPS = ddh->gps_time();
+    float evt_timeGPS_ns = evtTimeGPS.timeLow();
+
+    auto lite_data = (::larlite::event_crttrack*)lite_dh;
+
+    for(size_t i=0; i<dh->size(); ++i) {
+      
+      art::Ptr<::crt::CRTTrack> trk_ptr(dh,i);
+      
+      ::larlite::crttrack lite_trk;
+      lite_trk.feb_id = trk_ptr->feb_id;
+      lite_trk.pesmap = trk_ptr->pesmap;
+      lite_trk.peshit =  trk_ptr->peshit;
+      lite_trk.ts0_s =  trk_ptr->ts0_s;
+      lite_trk.ts0_ns =  trk_ptr->ts0_ns;
+      lite_trk.ts0_s_err =  trk_ptr->ts0_s_err;
+      lite_trk.ts0_ns_err =  trk_ptr->ts0_ns_err;
+      lite_trk.ts1_ns =  trk_ptr->ts1_ns;
+      lite_trk.ts1_ns_err =  trk_ptr->ts1_ns_err;
+      lite_trk.plane1 =  trk_ptr->plane1;
+      lite_trk.plane2 =  trk_ptr->plane2;
+      lite_trk.x1_pos =  trk_ptr->x1_pos;
+      lite_trk.x1_err =  trk_ptr->x1_err;
+      lite_trk.y1_pos =  trk_ptr->y1_pos;
+      lite_trk.y1_err =  trk_ptr->y1_err;
+      lite_trk.z1_pos =  trk_ptr->z1_pos;
+      lite_trk.z1_err =  trk_ptr->z1_err;
+      lite_trk.x2_pos =  trk_ptr->x2_pos;
+      lite_trk.x2_err =  trk_ptr->x2_err;
+      lite_trk.y2_pos =  trk_ptr->y2_pos;
+      lite_trk.y2_err =  trk_ptr->y2_err;
+      lite_trk.z2_pos =  trk_ptr->z2_pos;
+      lite_trk.z2_err =  trk_ptr->z2_err;
+      lite_trk.length =  trk_ptr->length;
+      lite_trk.thetaxy=  trk_ptr->thetaxy;
+      lite_trk.phiz   =  trk_ptr->phizy;
+      lite_trk.ts0_ns_h1 =  trk_ptr->ts0_ns_h1;
+      lite_trk.ts0_ns_err_h1 =  trk_ptr->ts0_ns_err_h1;
+      lite_trk.ts0_ns_h2 =  trk_ptr->ts0_ns_h2;
+      lite_trk.ts0_ns_err_h2 =  trk_ptr->ts0_ns_err_h2;
+      lite_trk.ts2_ns_h1 =  trk_ptr->ts0_ns_h1 - evt_timeGPS_ns + fCRTTOffset;
+      lite_trk.ts2_ns_h2 =  trk_ptr->ts0_ns_h2 - evt_timeGPS_ns + fCRTTOffset;
+      //fPtrIndex_ophit[hit_ptr] = std::make_pair(lite_data->size(),name_index);
+      
+      lite_data->push_back(lite_trk);
+    }
+
+  }
+  
   template <>
   void ScannerAlgo::ScanData(art::Handle<std::vector< ::recob::Cluster> > const &dh,
 			     ::larlite::event_base* lite_dh)
@@ -1461,7 +1584,19 @@ namespace larlite {
     if(fPtrIndex_hit[key1].size()<=key2) fPtrIndex_hit[key1].resize(key2+1);
     return fPtrIndex_hit[key1][key2]; 
   }
+  
+  template <> std::map<art::Ptr< ::crt::CRTHit>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2) 
+  { if(fPtrIndex_crthit.size()<=key1) fPtrIndex_crthit.resize(key1+1);
+    if(fPtrIndex_crthit[key1].size()<=key2) fPtrIndex_crthit[key1].resize(key2+1);
+    return fPtrIndex_crthit[key1][key2]; 
+  }
 
+  template <> std::map<art::Ptr< ::crt::CRTTrack>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2) 
+  { if(fPtrIndex_crttrack.size()<=key1) fPtrIndex_crttrack.resize(key1+1);
+    if(fPtrIndex_crttrack[key1].size()<=key2) fPtrIndex_crttrack[key1].resize(key2+1);
+    return fPtrIndex_crttrack[key1][key2]; 
+  }
+  
   template <> std::map<art::Ptr< ::raw::RawDigit>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
   { if(fPtrIndex_rawdigit.size()<=key1) fPtrIndex_rawdigit.resize(key1+1);
     if(fPtrIndex_rawdigit[key1].size()<=key2) fPtrIndex_rawdigit[key1].resize(key2+1);
@@ -1479,7 +1614,13 @@ namespace larlite {
     if(fPtrIndex_trigger[key1].size()<=key2) fPtrIndex_trigger[key1].resize(key2+1);
     return fPtrIndex_trigger[key1][key2]; 
   }
-
+  
+  template <> std::map<art::Ptr< ::raw::DAQHeaderTimeUBooNE>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
+  { if(fPtrIndex_daqheadertimeuboone.size()<=key1) fPtrIndex_daqheadertimeuboone.resize(key1+1);
+    if(fPtrIndex_daqheadertimeuboone[key1].size()<=key2) fPtrIndex_daqheadertimeuboone[key1].resize(key2+1);
+    return fPtrIndex_daqheadertimeuboone[key1][key2]; 
+  }
+  
   template <> std::map<art::Ptr< ::raw::ubdaqSoftwareTriggerData>,std::pair<size_t,size_t> >& ScannerAlgo::GetPtrMap(size_t key1, size_t key2)
   { if(fPtrIndex_swtrigger.size()<=key1) fPtrIndex_swtrigger.resize(key1+1);
     if(fPtrIndex_swtrigger[key1].size()<=key2) fPtrIndex_swtrigger[key1].resize(key2+1);
@@ -1619,6 +1760,15 @@ namespace larlite {
   { return ::larlite::data::kTrigger; }
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::ubdaqSoftwareTriggerData> () const
   { return ::larlite::data::kSWTrigger; }
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::raw::DAQHeaderTimeUBooNE> () const
+  { return ::larlite::data::kDAQHeaderTimeUBooNE; }
+
+  // crt
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTHit> () const
+  { return ::larlite::data::kCRTHit; }
+  template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::crt::CRTTrack> () const
+  { return ::larlite::data::kCRTTrack; }
+
   // recob
   template <> const ::larlite::data::DataType_t ScannerAlgo::LiteDataType<::recob::Wire> () const
   { return ::larlite::data::kWire; }
