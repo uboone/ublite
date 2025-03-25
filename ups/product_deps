@@ -250,8 +250,8 @@ fwdir	product_dir	scripts
 ####################################
 product		version		qual	flags		<table_format=2>
 ubdl		v2_me_06_03	-
-larpandora	v10_00_15	-
-ubana		v10_04_06	-
+larpandora	v10_00_16	-
+ubana		v10_04_07	-
 ubcv            v10_04_05	-	only_for_build
 cetmodules	v3_24_01	-	only_for_build
 end_product_list
