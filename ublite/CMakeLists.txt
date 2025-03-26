@@ -1,1 +1,3 @@
-add_subdirectory(LiteMaker)
+if(Torch_FOUND)
+  add_subdirectory(LiteMaker)
+endif()
