@@ -10,6 +10,7 @@ cet_make_library(
   larsim::EventWeight_Base
   lardata::LArPropertiesService
   larcore::Geometry_Geometry_service
+  lardataalg::UtilitiesHeaders
   lardataobj::RawData
   lardataobj::RecoBase
   lardataobj::MCBase
