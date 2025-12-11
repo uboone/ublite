@@ -47,6 +47,7 @@
 #include "larlite/DataFormat/mucsreco.h"
 #include "larlite/DataFormat/chstatus.h"
 #include "larlite/DataFormat/mceventweight.h"
+#include "lardataalg/Utilities/TrackingTypeUtils.h"
 #include <TStopwatch.h>
 /*
   This file defines certain specilization of templated functions.
@@ -1238,7 +1239,15 @@ namespace larlite {
   template <>
   void ScannerAlgo::ScanData(art::Handle<std::vector< ::anab::Calorimetry> > const &dh,
 			     ::larlite::event_base* lite_dh)
-  { 
+  {
+    auto const convertVecPointToTVec3 = [](auto const& vectors)
+      {
+        std::vector<TVector3> dest;
+        dest.reserve(size(vectors));
+        for (auto& v: vectors) dest.emplace_back(v.X(), v.Y(), v.Z());
+        return dest;
+      };
+ 
     fDataReadFlag_v[lite_dh->data_type()][lite_dh->name()] = true;  
     //auto name_index = NameIndex(lite_dh->data_type(),lite_dh->name());
     auto lite_data = (::larlite::event_calorimetry*)lite_dh;
@@ -1250,7 +1259,7 @@ namespace larlite {
       
       lite_calo.set_dedx(recob::tracking::convertVec<double,float>(calo_ptr->dEdx()));
       lite_calo.set_dqdx(recob::tracking::convertVec<double,float>(calo_ptr->dQdx()));
-      lite_calo.set_xyz(recob::tracking::convertVecPointToTVec3(calo_ptr->XYZ()));
+      lite_calo.set_xyz(convertVecPointToTVec3(calo_ptr->XYZ()));
       lite_calo.set_residual_range(recob::tracking::convertVec<double,float>(calo_ptr->ResidualRange()));
       lite_calo.set_deadwire_range(recob::tracking::convertVec<double,float>(calo_ptr->DeadWireResRC()));
       lite_calo.set_kinetic_energy(calo_ptr->KineticEnergy());
