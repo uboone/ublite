@@ -1,4 +1,5 @@
 
+if(larlite_FOUND)
 cet_make_library(
   SOURCE
   ScannerAlgo.cxx
@@ -20,7 +21,9 @@ cet_make_library(
   messagefacility::MF_MessageLogger
   larlite::DataFormat
 )
+endif()
 
+if(larlite_FOUND)
 cet_build_plugin(
   LiteScanner art::EDAnalyzer
   LIBRARIES
@@ -42,7 +45,9 @@ cet_build_plugin(
   lardataobj::AnalysisBase
   nusimdata::SimulationBase
 )
+endif()
 
+if(larlite_FOUND)
 cet_build_plugin(
   UtilScanner art::EDAnalyzer
   LIBRARIES
@@ -58,6 +63,7 @@ cet_build_plugin(
   art_root_io::TFileService_service
   ROOT::Tree
 )
+endif()
 
 cet_build_plugin(
   LLMetaMaker art::service
